@@ -13,6 +13,8 @@
   import Log, { type LogLine } from './Log.svelte'
 
   let { initialTx = '' }: { initialTx?: string } = $props()
+  // Only the first value is wanted: App re-creates this component when the transfer in the address changes.
+  // svelte-ignore state_referenced_locally
   let input = $state(initialTx)
   const { activeAddress, signTransactions } = useWallet()
   let vaa = $state<Vaa | undefined>()
@@ -22,11 +24,14 @@
   let busy = $state(false)
 
   const t = $derived(vaa?.transfer)
+  let nearRecipient = $state<string | undefined>() // the NEAR account behind the recipient hash, if registered
   // Display a 32-byte address in the native format of the chain it belongs to.
   const addr = (chain: number, b: Uint8Array) =>
     chain === ALGORAND.chainId ? (t?.tokenAddress === b ? `asset ${algosdk.bytesToBigInt(b)}` : algosdk.encodeAddress(b))
     : chainById(chain)?.platform === 'evm' ? '0x' + hex(b).slice(24)
     : chainById(chain)?.platform === 'solana' ? base58(b)
+    : chainById(chain)?.platform === 'near' && t?.to === b ? (nearRecipient ?? `an unregistered account (sha256 ${short(hex(b), 6)})`)
+    : chainById(chain)?.platform === 'near' && b.every((x) => x === 0) ? 'NEAR (native)'
     : hex(b)
   const dest = $derived(t ? chainById(t.toChain) : undefined)
   const toAlgorand = $derived(t?.toChain === ALGORAND.chainId)
@@ -37,7 +42,7 @@
   // Accepts a source transaction (Algorand id, EVM hash, Solana signature), a Wormholescan id chain/emitter/sequence,
   // or a raw VAA as hex or base64.
   async function lookup() {
-    vaa = op = redeemed = undefined
+    vaa = op = redeemed = nearRecipient = undefined
     log = []
     busy = true
     try {
@@ -69,7 +74,11 @@
       ;[vaa, op] = [parsed, found]
       // A link or a reload brings the same transfer back. A pasted VAA that Wormholescan does not know stays as typed.
       if (!raw || found) history.replaceState(null, '', `/redeem/?vaa=${opId}`)
-      redeemed = await redeemedOnChain(parsed).catch(() => undefined)
+      const toNear = chainById(parsed.transfer.toChain)?.platform === 'near'
+      ;[nearRecipient, redeemed] = await Promise.all([
+        toNear ? import('./lib/near.ts').then((near) => near.accountForHash(parsed.transfer!.to)).catch(() => undefined) : undefined,
+        redeemedOnChain(parsed).catch(() => undefined),
+      ])
     } catch (e) {
       say(errorText(e), 'err')
     } finally {
@@ -134,6 +143,33 @@
     }
   }
 
+  // The bridge pays out to registered NEAR accounts only. The recipient registers on its own redeem, so an unregistered
+  // recipient has to redeem from its own account.
+  async function redeemNear() {
+    if (!vaa || !wallets.near) return
+    busy = true
+    try {
+      const near = await import('./lib/near.ts')
+      const w = wallets.near.wallet
+      const plan = await near.planNearRedeem(w.accountId, vaa)
+      if (plan.executed) return void (redeemed = true)
+      const attached = plan.txs.reduce((n, tx) => n + tx.actions.reduce((m, a) => m + a.deposit, 0n), 0n)
+      say(`Approve ${plan.txs.length} transactions in ${w.name}: ${plan.txs.map((tx) => tx.label.toLowerCase()).join(', ')}. They attach ${formatUnits(attached, 24)} NEAR, and the bridge returns all but a little storage.`)
+      const sent = await w.signAndSend(plan.txs)
+      for (const [i, tx] of sent.entries()) {
+        await near.waitForNearTx(tx.hash, tx.signer)
+        say(`${i + 1}/${sent.length} confirmed`, '', `https://nearblocks.io/txns/${tx.hash}`)
+      }
+      redeemed = await near.isRedeemedOnNear(vaa)
+      if (redeemed) say(`Redeemed to ${plan.receiver}${plan.native ? ' (native NEAR)' : ` (${plan.token})`}.`, 'ok')
+      else say('The transactions went through, but the bridge does not show the transfer as complete. Look it up again, and redeem again if it is still open.', 'err')
+    } catch (e) {
+      say(errorText(e), 'err')
+    } finally {
+      busy = false
+    }
+  }
+
   async function redeemAlgorand() {
     if (!vaa) return
     busy = true
@@ -167,7 +203,7 @@
 </script>
 
 <h2>Find the transfer</h2>
-<label for="tx">Source transaction (Algorand transaction ID, EVM transaction hash or Solana signature), Wormholescan ID (chain/emitter/sequence), or a signed VAA in hex or base64</label>
+<label for="tx">Source transaction (Algorand transaction ID, EVM transaction hash, Solana signature or NEAR transaction hash), Wormholescan ID (chain/emitter/sequence), or a signed VAA in hex or base64</label>
 <div class="row">
   <input id="tx" bind:value={input} onkeydown={(e) => e.key === 'Enter' && !busy && input.trim() && lookup()} />
   <button class="primary" disabled={busy || !input.trim()} onclick={lookup}>{busy && !vaa ? 'Looking up...' : 'Look up'}</button>
@@ -213,6 +249,19 @@
       <div class="row"><button class="primary" disabled={busy} onclick={redeemEvm}>Redeem with {wallets.evm.wallet.name}</button></div>
     {:else}
       <ConnectPrompt kind="evm" text="Connect an EVM wallet to pay for the redeem on {dest.name}." />
+    {/if}
+  {:else if dest.platform === 'near'}
+    <h2>Redeem on NEAR</h2>
+    <p class="muted">Any NEAR account can submit the redeem for a recipient the bridge already knows. An account it has not seen yet
+      registers on its own redeem, so connect the recipient account. The redeem attaches about 0.2 NEAR, which the bridge returns
+      apart from a little storage.</p>
+    {#if !nearRecipient}
+      <p class="warn">The recipient is not registered with the bridge yet, so only the recipient account can redeem this transfer. It registers as part of the redeem.</p>
+    {/if}
+    {#if wallets.near}
+      <div class="row"><button class="primary" disabled={busy} onclick={redeemNear}>Redeem with {wallets.near.address}</button></div>
+    {:else}
+      <ConnectPrompt kind="near" text="Connect a NEAR wallet to redeem on NEAR." />
     {/if}
   {:else}
     <h2>Redeem on Solana</h2>

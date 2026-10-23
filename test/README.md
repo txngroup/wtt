@@ -18,22 +18,40 @@ packages first with `npm ci`.
 | `node test/sim-solana-send.mjs <owner> <algorand address>` | Solana send simulation and message sequence |
 | `node test/sim-unwrap.mjs <wallet>` | Partial and full wSOL unwrap (wrap then unwrap, simulated) |
 | `node --env-file-if-exists=.env test/check-walletconnect.mjs` | Your WalletConnect project id is accepted by the relay |
+| `node test/check-near.ts` | NEAR bridge registry, wrapped ALGO on NEAR, redeem plans and status for the latest transfer into NEAR, and the sequence of the latest transfer out of NEAR against Wormholescan |
 
 `<op id>` is a Wormholescan operation id, `<chain>/<emitter>/<sequence>`, as shown on wormholescan.io.
 
 ## SDK diffs
 
-`test/sdk/` has its own `package.json` with the Wormhole SDK 6.1.5 and `@solana/web3.js` 1.99.0, so the app itself
-never depends on them. Each script builds the same instructions or transactions with the SDK and with our code, and
-prints `OK` or `DIFF` for each.
+These diff our hand-written builders against the official libraries: the Wormhole SDK 6.1.5, `@solana/web3.js`
+1.99.0 and `near-api-js` 1.1.0. Each script builds the same instructions or transactions with the library and with our
+code, and prints `OK` or `DIFF` for each.
+
+| Script | Compares |
+|---|---|
+| `compare-solana.mjs` | Every Solana redeem and send instruction, against the Wormhole SDK |
+| `compare-solana-tx.mjs` | `src/lib/solana-tx.ts` against `@solana/web3.js`, byte for byte |
+| `compare-algorand-redeem.mjs [<op id> ...]` | The Algorand redeem group against the SDK's `redeem()`, for the latest transfers to Algorand by default |
+| `compare-near.mjs` | `src/lib/near-tx.ts` against `near-api-js`, byte for byte |
+
+The libraries never reach the site. `test/sdk/` holds only their names, versions and hashes, in its own `package.json`
+and lockfile. One command installs them, verifies them, runs every diff and deletes them again:
 
 ```sh
-cd test/sdk
-npm ci
-node compare-solana.mjs                       # every Solana redeem and send instruction
-node compare-solana-tx.mjs                    # src/lib/solana-tx.ts against @solana/web3.js, byte for byte
-node compare-algorand-redeem.mjs <op id> ...  # the Algorand redeem group against the SDK's redeem()
+npm run test:sdk          # on this machine
+npm run test:sdk:docker   # in a throwaway Docker container
 ```
+
+The lockfile pins every library and every package under it by version and SHA-512, so `npm ci` refuses any download
+that does not match, and no package runs code at install time. Their code does run during the diffs. To keep it off
+your machine, use the Docker variant. It gives the libraries a read-only copy of the repository and nothing else of
+your machine, runs them as an unprivileged user without capabilities, and keeps everything in memory. The image is
+pinned by digest. Pull requests that touch `src/lib/` or `test/` also run the diffs on GitHub (`sdk-diffs.yml`).
+
+The NEAR bridge calls themselves are checked by `check-near.ts`, against the values of `@certusone/wormhole-sdk`
+0.10.18, the last Wormhole SDK with NEAR support. Those were compared call by call on 2026-10-23 and are written into
+the check, so it needs no copy of that SDK.
 
 ## Fixtures
 

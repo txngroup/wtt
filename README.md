@@ -24,10 +24,11 @@ undone, so send a small test amount first.
 | `/activity/` | Token Bridge transfers to or from Algorand for the connected wallets or any address, with on-chain redeem status and a Continue link for unfinished ones |
 | `/unwrap/` | Unwrap a chain's wrapped gas token: wSOL (partial or full), or WETH, WAVAX, WBNB and WPOL |
 
-Chains: Algorand, Solana, Ethereum, BNB Smart Chain, Polygon, Avalanche, Celo, Arbitrum, Optimism and Base.
+Chains: Algorand, Solana, Ethereum, BNB Smart Chain, Polygon, Avalanche, Celo, Arbitrum, Optimism, Base and NEAR.
 
 Wallets: Pera and Lute on Algorand, any EIP-6963 browser wallet on EVM chains, any Wallet Standard browser wallet on
-Solana, and phone wallets on EVM and Solana through WalletConnect.
+Solana, phone wallets on EVM and Solana through WalletConnect, and Meteor and HOT on NEAR (each as a browser extension,
+or through its web wallet or phone app).
 
 ## Quick start
 
@@ -183,6 +184,9 @@ parts of them the app needs are hand-written in `src/lib/`, and checked byte for
 | `src/lib/solana-tx.ts` | The `@solana/web3.js` subset the app uses: `PublicKey` and PDAs, `Keypair`, legacy `Transaction`, a fetch-based `Connection` |
 | `src/lib/solana-wallets.ts` | Wallet Standard discovery and signing |
 | `src/lib/walletconnect.ts` | WalletConnect v2 sessions, exposed as an EIP-1193 provider or a Wallet Standard-like Solana wallet |
+| `src/lib/near.ts` | NEAR token bridge: account registry, redeem (`submit_vaa`) and send (`send_transfer_near`, `send_transfer_wormhole_token`), sequence from the publish event |
+| `src/lib/near-tx.ts` | NEAR transactions in their borsh wire format, the near-api-js subset the app uses |
+| `src/lib/near-wallets.ts` | Meteor (extension or web wallet popup) and HOT (extension, or the HOT app through its relay and a QR code) |
 | `src/lib/activity.ts` | Transfer history from Wormholescan, re-checked on the destination chain when Wormholescan has no redeem |
 | `src/lib/config.ts` | Build-time settings from `.env` |
 
@@ -211,9 +215,11 @@ signatures, and CI runs it too. The GitHub Actions in the workflows are pinned t
 
 ## Tests
 
-`test/` has read-only checks against mainnet, and `test/sdk/` diffs the hand-written builders against the Wormhole SDK
-6.1.5 and `@solana/web3.js` 1.99.0. Every Solana instruction and transaction, and the Algorand redeem group, came out
-identical. [test/README.md](test/README.md) lists the commands.
+`test/` has read-only checks against mainnet, and the SDK diffs compare the hand-written builders with the Wormhole SDK
+6.1.5, `@solana/web3.js` 1.99.0 and `near-api-js` 1.1.0. Every Solana instruction and transaction, the Algorand redeem
+group and every NEAR transaction came out identical. `npm run test:sdk` installs those libraries, at pinned versions
+checked by hash, runs the diffs and removes them again, and `npm run test:sdk:docker` does the same in a throwaway
+container. The site itself never installs them. [test/README.md](test/README.md) lists the commands.
 
 ## Limits
 

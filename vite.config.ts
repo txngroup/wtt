@@ -11,7 +11,8 @@ import { NOT_FOUND, PAGES, SITE_NAME, SITE_INTRO, type Page } from './src/pages.
 //   else. Wormholescan; Algorand algod and indexer (Nodely); PublicNode for Solana and EVM reads; Pera's config, bridges
 //   (wallet-connect-*.perawallet.app, listed in wc.perawallet.app/config.json) and node; the two Pera modal animations,
 //   as exact files in Pera's S3 bucket; the WalletConnect relay and verify API. Lute opens lute.app in a popup and
-//   needs no entry. data: is for an icon the Pera modal fetches inline. Browser wallets make their RPC calls from the
+//   needs no entry. NEAR reads go to FastNEAR's public RPC, or NEAR's own. HOT's phone wallet answers through its relay, h4n.app;
+//   Meteor's web wallet is a popup window and needs no entry. data: is for an icon the Pera modal fetches inline. Browser wallets make their RPC calls from the
 //   extension, not the page. A new wallet or RPC host must be added here first.
 // - media-src: the sound Pera Connect loops on iPhones while the connection waits for approval in the Pera app, which
 //   seems to keep the backgrounded tab and its bridge connection alive. One exact file.
@@ -23,7 +24,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data: https:",
-  "connect-src 'self' data: https://api.wormholescan.io https://mainnet-api.algonode.cloud https://mainnet-idx.algonode.cloud https://*.publicnode.com https://*.perawallet.app wss://*.perawallet.app https://s3.amazonaws.com/wc.perawallet.app/static/sign-toast-animation.json https://s3.amazonaws.com/wc.perawallet.app/static/pera-loader-animation.json wss://relay.walletconnect.org https://verify.walletconnect.org",
+  "connect-src 'self' data: https://api.wormholescan.io https://mainnet-api.algonode.cloud https://mainnet-idx.algonode.cloud https://*.publicnode.com https://*.perawallet.app wss://*.perawallet.app https://s3.amazonaws.com/wc.perawallet.app/static/sign-toast-animation.json https://s3.amazonaws.com/wc.perawallet.app/static/pera-loader-animation.json wss://relay.walletconnect.org https://verify.walletconnect.org https://free.rpc.fastnear.com https://rpc.mainnet.near.org https://h4n.app",
   'media-src https://s3.amazonaws.com/wc.perawallet.app/audio.mp3',
   'frame-src https://*.perawallet.app https://lute.app https://verify.walletconnect.org',
   "worker-src 'self' blob:",
@@ -164,6 +165,9 @@ export default defineConfig(({ mode }) => {
     plugins: [svelte(), pages(siteUrl)],
     // Some wallet connector dependencies still reference Node's `global`.
     define: { global: 'globalThis' },
-    build: { target: 'es2022', sourcemap: true },
+    // The main bundle is about 660 kB before compression, two thirds of it algosdk, which every page needs at load for
+    // the Algorand wallet. The other wallets' SDKs and the Solana code load when first used. The NEAR code, about 10 kB,
+    // is fetched separately as the page loads, so a Meteor popup can open within the click that asks for it.
+    build: { target: 'es2022', sourcemap: true, chunkSizeWarningLimit: 700 },
   }
 })

@@ -1,17 +1,20 @@
-// Site-wide EVM and Solana wallet connections, connected once in the wallet bar and shared by every page.
+// Site-wide EVM, Solana and NEAR wallet connections, connected once in the wallet bar and shared by every page.
 // (Algorand wallets are already site-wide through use-wallet.) The last choice is remembered and restored quietly
 // on the next visit: injected wallets via eth_accounts / silent connect, WalletConnect via its stored session.
 import { connectEvm, discoverEvmWallets, type EvmWallet } from './evm.ts'
+import type { NearWallet } from './near-wallets.ts'
 
 export type EvmConnection = { wallet: EvmWallet; address: string }
 export type SolanaConnection = { wallet: any; account: any; address: string }
-export type WalletKind = 'algo' | 'evm' | 'sol'
+export type NearConnection = { wallet: NearWallet; address: string } // address: the NEAR account id
+export type WalletKind = 'algo' | 'evm' | 'sol' | 'near'
 
 // $state.raw: reactive on assignment, but the wallet objects themselves are not proxied (wallets may rely on identity).
 class Connections {
   evm = $state.raw<EvmConnection | undefined>()
   sol = $state.raw<SolanaConnection | undefined>()
-  restoring = $state.raw<{ evm?: boolean; sol?: boolean }>({})
+  near = $state.raw<NearConnection | undefined>()
+  restoring = $state.raw<{ evm?: boolean; sol?: boolean; near?: boolean }>({})
   request = $state.raw<{ kind?: WalletKind; n: number } | undefined>() // the latest requestConnect
 }
 export const conn = new Connections()
@@ -21,7 +24,7 @@ export const conn = new Connections()
 let requests = 0
 export const requestConnect = (kind?: WalletKind) => (conn.request = { kind, n: ++requests })
 
-const KEY = { evm: 'wallet.evm', sol: 'wallet.sol' }
+const KEY = { evm: 'wallet.evm', sol: 'wallet.sol', near: 'wallet.near' }
 const remember = (k: string, v: string | null) => {
   try {
     v ? localStorage.setItem(k, v) : localStorage.removeItem(k)
@@ -50,10 +53,17 @@ export async function connectSolanaWallet(w: any) {
   remember(KEY.sol, w.topic ? 'walletconnect' : w.name)
 }
 
-export async function disconnectWallet(kind: 'evm' | 'sol') {
+// NEAR wallets keep no session of their own here; the choice is remembered as <wallet id>:<account id>.
+export function connectNearWallet(w: NearWallet) {
+  conn.near = { wallet: w, address: w.accountId }
+  remember(KEY.near, `${w.id}:${w.accountId}`)
+}
+
+export async function disconnectWallet(kind: 'evm' | 'sol' | 'near') {
   const c = conn[kind]
   conn[kind] = undefined
   remember(KEY[kind], null)
+  if (kind === 'near') return
   if (c?.wallet.topic) (await import('./walletconnect.ts')).disconnectSession(c.wallet.topic)
   else if (kind === 'sol') await c?.wallet.features['standard:disconnect']?.disconnect?.()
 }
@@ -97,10 +107,17 @@ export async function restoreWallets() {
       if (w && account) conn.sol = { wallet: w, account, address: account.address }
       return !!(w && account)
     }),
+    restore('near', async (choice) => {
+      const [id, account] = choice.split(':')
+      const nw = await import('./near-wallets.ts')
+      const w = await nw.restoreNearWallet(id, account)
+      if (w) conn.near = { wallet: w, address: w.accountId }
+      return !!w
+    }),
   ])
 }
 
-async function restore(kind: 'evm' | 'sol', attempt: (choice: string) => Promise<boolean>) {
+async function restore(kind: 'evm' | 'sol' | 'near', attempt: (choice: string) => Promise<boolean>) {
   const choice = recall(KEY[kind])
   if (!choice) return
   conn.restoring = { ...conn.restoring, [kind]: true }

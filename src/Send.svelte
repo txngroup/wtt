@@ -26,10 +26,10 @@
   let wait = $state<GuardianWait | undefined>()
 
   const dest = $derived(selected ? chainById(selected.originChain) : undefined)
-  // The connected EVM or Solana wallet (wallet bar) is the natural recipient on that platform.
+  // The connected EVM, Solana or NEAR wallet (wallet bar) is the natural recipient on that platform.
   const defaultRecipient = (a: WrappedAsset) => {
     const p = chainById(a.originChain)?.platform
-    return (p === 'evm' ? conn.evm?.address : p === 'solana' ? conn.sol?.address : undefined) ?? ''
+    return (p === 'evm' ? conn.evm?.address : p === 'solana' ? conn.sol?.address : p === 'near' ? conn.near?.address : undefined) ?? ''
   }
   const say = (text: string, cls?: string) => (log = [...log, { text, cls }])
   const reset = () => {
@@ -50,6 +50,16 @@
   async function recipientBytes(): Promise<{ to: Uint8Array; note?: string }> {
     if (!dest || !selected) throw new Error('choose an asset')
     if (dest.platform === 'evm') return { to: evmAddressTo32(recipient.trim()) }
+    // NEAR names the recipient by the sha256 of its account id. The account must exist, so a typo cannot strand the
+    // funds; it need not be registered with the bridge yet, since it registers when it redeems.
+    if (dest.platform === 'near') {
+      const near = await import('./lib/near.ts')
+      const account = recipient.trim()
+      if (!near.isNearAccountId(account)) throw new Error(`${account} is not a NEAR account id`)
+      if (!(await near.accountExists(account))) throw new Error(`there is no NEAR account ${account}`)
+      const registered = await near.isRegistered(account)
+      return { to: near.accountHash(account), note: registered ? account : `${account} (it registers with the bridge when it redeems)` }
+    }
     // Solana pays into the recipient's associated token account for the token's mint, not the wallet itself.
     const sol = await import('./lib/solana.ts')
     const { PublicKey } = await import('./lib/solana-tx.ts')
@@ -151,8 +161,8 @@
       <input id="amount" bind:value={amount} oninput={reset} placeholder="0.0" />
       <button onclick={() => { amount = formatUnits(selected!.amount, selected!.decimals); reset() }}>Max</button>
     </div>
-    <label for="recipient">{dest.platform === 'evm' ? `${dest.name} address (0x...)` : 'Solana wallet address'}</label>
-    <input id="recipient" bind:value={recipient} oninput={reset} placeholder={dest.platform === 'evm' ? '0x...' : 'base58 wallet address'} />
+    <label for="recipient">{dest.platform === 'evm' ? `${dest.name} address (0x...)` : dest.platform === 'near' ? 'NEAR account' : 'Solana wallet address'}</label>
+    <input id="recipient" bind:value={recipient} oninput={reset} placeholder={dest.platform === 'evm' ? '0x...' : dest.platform === 'near' ? 'alice.near' : 'base58 wallet address'} />
     <p class="warn">Send a small test amount first. Bridged funds cannot be recalled.</p>
     <button class="primary" disabled={busy || !amount || !recipient} onclick={prepare}>Review</button>
   {/if}

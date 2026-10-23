@@ -18,7 +18,7 @@
   let busy = $state(false)
 
   const addresses = $derived(
-    [activeAddress.current, conn.evm?.address, conn.sol?.address, ...looked].filter((a): a is string => !!a),
+    [activeAddress.current, conn.evm?.address, conn.sol?.address, conn.near?.address, ...looked].filter((a): a is string => !!a),
   )
 
   async function load(list: string[]) {
@@ -59,7 +59,7 @@
   not yet redeemed is checked on its destination chain. Use Continue to finish a transfer you left part way.
 </p>
 
-<label for="extra">Look up another address (Algorand, EVM or Solana)</label>
+<label for="extra">Look up another address (Algorand, EVM, Solana or a NEAR account)</label>
 <div class="row">
   <input id="extra" bind:value={extra} placeholder="Address" onkeydown={(e) => e.key === 'Enter' && addAddress()} />
   <button disabled={!extra.trim()} onclick={addAddress}>Add</button>
@@ -113,6 +113,8 @@
               <span class="ok">Redeemed</span>
             {:else if t.status === 'signing'}
               <span class="muted">Waiting for the guardians</span>
+            {:else if t.status === 'unchecked'}
+              <a class="button" href={`/redeem/?vaa=${t.id}`} title="{chainName(t.toChain)} could not be asked whether this was redeemed">Check</a>
             {:else}
               <span class="muted">{chainName(t.toChain)} is not supported here</span>
             {/if}

@@ -37,7 +37,7 @@ export const PAGES: Page[] = [
     title: `Send tokens to Algorand - ${SITE_NAME}`,
     description:
       'Bridge tokens to Algorand from Ethereum, Solana, Avalanche, BNB Smart Chain, Polygon, Arbitrum, Optimism, ' +
-      'Base or Celo with the Wormhole Token Bridge. Works for tokens that already have a wrapped asset on Algorand, ' +
+      'Base, Celo or NEAR with the Wormhole Token Bridge. Works for tokens that already have a wrapped asset on Algorand, ' +
       'and offers the ASA opt-in when the recipient needs one.',
   },
   {

@@ -9,6 +9,7 @@
   import Activity from './Activity.svelte'
   import WalletBar from './WalletBar.svelte'
   import ConfirmDialog from './ConfirmDialog.svelte'
+  import HotRelayDialog from './HotRelayDialog.svelte'
   import { PAGES, SITE_NAME, SITE_INTRO } from './pages.ts'
   import { router, startRouter } from './lib/router.svelte.ts'
   import overview from './overview.html?raw' // bundled site text, also pre-rendered at build time
@@ -78,9 +79,12 @@
       Uses the Token Bridge app on Algorand (842126029). Algorand data comes from
       <a href="https://nodely.io" target="_blank" rel="noreferrer">Nodely</a> and Solana data from
       <a href="https://publicnode.com" target="_blank" rel="noreferrer">PublicNode</a>. EVM data comes through your
-      wallet, or from PublicNode for WalletConnect wallets. Signed transfers and their status come from
+      wallet, or from PublicNode for WalletConnect wallets. NEAR data comes from
+      <a href="https://fastnear.com" target="_blank" rel="noreferrer">FastNEAR</a>, or from NEAR's own public RPC when
+      FastNEAR is busy. Signed transfers and their status come from
       <a href="https://wormholescan.io" target="_blank" rel="noreferrer">Wormholescan</a>.
     </p>
   </footer>
   <ConfirmDialog />
+  <HotRelayDialog />
 </main>

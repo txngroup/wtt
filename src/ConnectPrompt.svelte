@@ -4,7 +4,7 @@
   import { requestConnect, type WalletKind } from './lib/wallets.svelte.ts'
 
   let { kind, text }: { kind?: WalletKind; text: string } = $props()
-  const LABEL: Record<WalletKind, string> = { algo: 'Algorand', evm: 'EVM', sol: 'Solana' }
+  const LABEL: Record<WalletKind, string> = { algo: 'Algorand', evm: 'EVM', sol: 'Solana', near: 'NEAR' }
 </script>
 
 <div class="prompt">

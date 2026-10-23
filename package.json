@@ -17,6 +17,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test:sdk": "sh scripts/test-sdk.sh",
+    "test:sdk:docker": "sh scripts/test-sdk-docker.sh",
     "og-image": "node --env-file-if-exists=.env scripts/og-image.mjs",
     "verify": "node scripts/verify.mjs"
   },

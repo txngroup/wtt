@@ -1,6 +1,7 @@
 // Oracle test: build the Algorand redeem group for real Algorand-bound VAAs with the official SDK and with the
 // hand-rolled src/lib/algorand-redeem.ts, and diff them (ignoring rounds, genesis, group id, notes).
-// Run from test/sdk after npm ci: node compare-algorand-redeem.mjs <wormholescan op id> [...]
+// Run from test/sdk after npm ci: node compare-algorand-redeem.mjs [<wormholescan op id> ...]
+// Without ids, it takes the three latest transfers to Algorand that Wormholescan lists.
 import algosdk from 'algosdk' // v2, as used by the SDK
 import { Wormhole } from '@wormhole-foundation/sdk-connect'
 import { deserialize } from '@wormhole-foundation/sdk-definitions'
@@ -25,7 +26,13 @@ const strip = (bytes) => {
   return JSON.stringify(norm(o))
 }
 let failures = 0
-for (const id of process.argv.slice(2)) {
+const latest = async () =>
+  (await (await fetch('https://api.wormholescan.io/api/v1/operations?targetChain=8&appId=PORTAL_TOKEN_BRIDGE&pageSize=20')).json()).operations
+    .filter((o) => o.vaa?.raw && o.content?.payload?.payloadType === 1)
+    .slice(0, 3)
+    .map((o) => o.id)
+const ids = process.argv.length > 2 ? process.argv.slice(2) : await latest()
+for (const id of ids) {
   const op = await (await fetch(`https://api.wormholescan.io/api/v1/operations/${id}`)).json()
   const bytes = b64ToBytes(op.vaa.raw)
   const v = parseVaa(bytes)
