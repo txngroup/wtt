@@ -1,0 +1,8 @@
+{
+  "name": "wtt-deploy-cloudflare",
+  "private": true,
+  "description": "Wrangler, pinned for CI to upload the build to Cloudflare Pages. Kept apart so building the site never installs it.",
+  "dependencies": {
+    "wrangler": "4.149.0"
+  }
+}

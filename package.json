@@ -1,0 +1,42 @@
+{
+  "name": "wtt",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Static web app for the Wormhole Token Bridge (Wrapped Token Transfers) on Algorand",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/txngroup/wtt.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "og-image": "node --env-file-if-exists=.env scripts/og-image.mjs",
+    "verify": "node scripts/verify.mjs"
+  },
+  "dependencies": {
+    "@noble/curves": "1.9.7",
+    "@noble/hashes": "1.8.0",
+    "@txnlab/use-wallet": "5.0.1",
+    "@txnlab/use-wallet-lute": "5.0.0",
+    "@txnlab/use-wallet-pera": "5.0.1",
+    "@txnlab/use-wallet-svelte": "5.0.1",
+    "@walletconnect/sign-client": "2.25.0",
+    "@walletconnect/types": "2.25.0",
+    "algosdk": "3.8.0",
+    "qrcode-generator": "2.0.4"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "svelte": "5.57.2",
+    "svelte-check": "4.7.6",
+    "typescript": "5.9.3",
+    "vite": "8.2.4"
+  }
+}

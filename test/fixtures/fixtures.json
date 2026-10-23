@@ -1,0 +1,16 @@
+{
+  "sol-to-solana": {
+    "description": "Native SOL returned from Algorand to Solana, redeemed and unwrapped on Solana",
+    "wormholescan": "8/67e93fa6c8ac5c819990aa7340c0c16b508abb1178be9b30d024b8ac25193d45/18250",
+    "sourceTx": "GAM2QXORJWZK4DKXA3DGEJE2OO7GVTEDMXGENETGI5NUQG7FBE7Q",
+    "redeemTx": "5mjwRue61QZgC99sthEUKHFhFg16xs7kLy2k5WQFncBp8gGY1uQkSRF3MMdqCb2CuN6H334oLy3qkh2yFBkjBu67",
+    "recipientOwner": "ECtLweT8hDig32zDMoAptKrwUSRqVoqCxAUs5RLxLRKw"
+  },
+  "wavax-to-avalanche": {
+    "description": "WAVAX returned from Algorand to Avalanche, redeemed with completeTransferAndUnwrapETH",
+    "wormholescan": "8/67e93fa6c8ac5c819990aa7340c0c16b508abb1178be9b30d024b8ac25193d45/18233",
+    "sourceTx": "KPPN27GCJUUU7BG2OFKDCQTIZDSN5GZJLN27ZCGJWJDL6NKII5YA",
+    "redeemTx": "0x5eb6439f08eb103de2b048387b6c6732c21646e7acbc66e829c8341fd65cf5bc",
+    "calldata": "wavax-to-avalanche.avax-calldata.hex"
+  }
+}

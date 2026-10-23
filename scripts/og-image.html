@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- Source of public/og.png, the 1200x630 social preview card. Regenerate with scripts/og-image.mjs, which fills in {{host}}. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  html, body { margin: 0; width: 1200px; height: 630px; }
+  body {
+    box-sizing: border-box; padding: 84px 96px; background: #f3f4f5; color: #17191c;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .top { display: flex; align-items: center; gap: 28px; }
+  svg { width: 88px; height: 88px; flex: none; }
+  h1 { font-size: 76px; font-weight: 700; letter-spacing: -.03em; margin: 0; }
+  p { font: 34px/1.35 system-ui, -apple-system, sans-serif; color: #3a3f45; margin: 0; max-width: 960px; }
+  .bottom { border-top: 2px solid #17191c; padding-top: 22px; display: flex; justify-content: space-between; font-size: 28px; }
+  .muted { color: #61666d; }
+</style>
+</head>
+<body>
+  <div>
+    <div class="top">
+      <svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#17191c"/><circle cx="16" cy="16" r="10" fill="none" stroke="#f3f4f5" stroke-width="2.5"/><circle cx="16" cy="16" r="4.5" fill="none" stroke="#f3f4f5" stroke-width="2.5"/></svg>
+      <h1>Algorand WTT</h1>
+    </div>
+    <p style="margin-top: 44px">Bridge tokens to and from Algorand with the Wormhole Token Bridge (Wrapped Token Transfers).</p>
+  </div>
+  <div class="bottom"><span>{{host}}</span><span class="muted">send / receive / unwrap</span></div>
+</body>
+</html>

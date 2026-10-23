@@ -1,0 +1,125 @@
+/* Plain technical look: neutral greys and ink, monospace headings and data, square corners, rules rather than boxes. */
+:root {
+  --bg: #f3f4f5; --fg: #17191c; --muted: #61666d; --line: #c8ccd1; --field: #fbfbfc; --sunk: #e7e9ec;
+  --ok: #2d6a2d; --err: #a3201a; --warn: #8a5300;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --control: 38px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #131416; --fg: #e4e6e9; --muted: #969ba3; --line: #34373c; --field: #1a1c1f; --sunk: #222428;
+    --ok: #7fbf7a; --err: #f07a6e; --warn: #d9a54a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.55 system-ui, -apple-system, sans-serif; }
+/* The wallets and page links use the full width; page text and forms keep a readable line length. */
+main { max-width: 1040px; margin: 0 auto; padding: 40px 16px 48px; }
+main > .card, footer { max-width: 688px; }
+@media (min-width: 720px) {
+  main { padding-inline: 32px; }
+}
+
+header { border-bottom: 1px solid var(--fg); padding-bottom: 14px; }
+h1 { font: 600 1.45rem/1.2 var(--mono); margin: 0; letter-spacing: -.02em; }
+header p { margin: 8px 0 0; max-width: 62ch; }
+h2 { font: 600 1rem/1.3 var(--mono); margin: 32px 0 10px; letter-spacing: -.01em; }
+.card > h2:first-child { margin-top: 0; }
+h3 { font: 600 .95rem/1.3 var(--mono); margin: 26px 0 8px; }
+.overview > h2:first-child { margin-top: 0; }
+.overview ul, .overview ol { padding-left: 22px; margin: 8px 0; }
+.overview li { margin: 6px 0; }
+p { margin: 10px 0; }
+code, .mono { font: 13px/1.45 var(--mono); word-break: break-all; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+b { font-weight: 600; }
+.muted { color: var(--muted); }
+.ok { color: var(--ok); } .err { color: var(--err); } .warn { color: var(--warn); }
+
+/* A paragraph styled ok/err/warn is a notice; inline spans stay plain colored text. */
+p.ok, p.err, p.warn { padding: 8px 12px; border: 1px solid currentColor; }
+
+.box { border: 1px solid var(--line); padding: 12px 14px; margin: 12px 0; background: var(--field); }
+
+/* Page links: an icon above a short label in six columns on phones (three under 360px), one row from 720px. */
+nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 28px -12px 0; border-bottom: 1px solid var(--fg); }
+nav a {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; min-height: 64px; padding: 10px 1px 9px;
+  margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted); text-decoration: none; text-align: center;
+  font: 500 10.5px/1.25 var(--mono); letter-spacing: .02em; text-transform: uppercase;
+}
+nav a:hover { color: var(--fg); }
+nav a.active { color: var(--fg); border-bottom-color: var(--fg); }
+nav a:focus-visible { outline-offset: -2px; }
+nav svg { flex: none; }
+@media (max-width: 359px) {
+  nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 720px) {
+  nav { display: flex; gap: 4px; margin-inline: 0; }
+  nav a { flex-direction: row; gap: 8px; min-height: 48px; padding: 0 14px; font-size: 12px; letter-spacing: .05em; white-space: nowrap; }
+  nav svg { width: 18px; height: 18px; }
+}
+.card { padding-top: 24px; }
+
+button {
+  font: inherit; min-height: var(--control); padding: 0 14px; border: 1px solid var(--fg); border-radius: 0;
+  background: transparent; color: var(--fg); cursor: pointer; white-space: nowrap;
+}
+button:hover:not(:disabled) { background: var(--sunk); }
+button.primary { background: var(--fg); color: var(--bg); padding: 0 22px; font-weight: 600; }
+button.primary:hover:not(:disabled) { background: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+button.small { min-height: 28px; padding: 0 10px; font-size: 13px; }
+button:disabled { opacity: .4; cursor: default; }
+/* A link that leads to the next step looks like a button. */
+a.button { display: inline-flex; align-items: center; min-height: var(--control); padding: 0 14px; border: 1px solid var(--fg); text-decoration: none; }
+a.button.primary { background: var(--fg); color: var(--bg); padding: 0 22px; font-weight: 600; }
+a.button:hover { text-decoration: underline; }
+input, select {
+  font: inherit; min-height: var(--control); padding: 6px 10px; width: 100%; border-radius: 0;
+  border: 1px solid var(--line); border-bottom-color: var(--fg); background: var(--field); color: var(--fg);
+}
+input::placeholder { color: var(--muted); }
+:is(input, select, button, a):focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+input[type='radio'] { width: auto; min-height: 0; margin: 0; accent-color: var(--fg); }
+label { display: block; margin: 18px 0 6px; font: 13px/1.3 var(--mono); color: var(--muted); }
+.actions { margin-top: 16px; }
+
+table { width: 100%; border-collapse: collapse; }
+td, th { text-align: left; padding: 7px 12px 7px 0; vertical-align: top; }
+tr + tr > * { border-top: 1px solid var(--line); }
+th { font: 12px/1.9 var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 400; white-space: nowrap; width: 1%; }
+@media (max-width: 520px) {
+  .kv tr, .kv th, .kv td { display: block; width: auto; }
+  .kv th { padding-bottom: 0; }
+  .kv td { padding-top: 0; border-top: 0 !important; }
+}
+
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.row > input, .row > select { flex: 1; min-width: 0; width: auto; }
+
+/* A list of choices, one radio per line. */
+.options { border-top: 1px solid var(--fg); border-bottom: 1px solid var(--fg); }
+.options label {
+  display: flex; gap: 12px; align-items: center; margin: 0; padding: 10px 6px; cursor: pointer;
+  font: inherit; text-transform: none; letter-spacing: 0; color: var(--fg);
+}
+.options label + label { border-top: 1px solid var(--line); }
+.options label:hover, .options label:has(input:checked) { background: var(--sunk); }
+.options .grow { flex: 1; }
+.options .num { font: 14px var(--mono); }
+
+.log { font: 13px/1.6 var(--mono); white-space: pre-wrap; border: 0; border-left: 2px solid var(--fg); }
+.card > button { margin-top: 8px; }
+
+/* Read by screen readers only. */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+footer { margin-top: 48px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; }
+
+@media (max-width: 420px) {
+  main { padding-top: 24px; }
+  h1 { font-size: 1.3rem; }
+}

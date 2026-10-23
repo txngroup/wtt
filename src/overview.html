@@ -1,0 +1,52 @@
+<h2>Bridge tokens to and from Algorand</h2>
+<p>
+  Algorand WTT is an unofficial web app for the Wormhole Token Bridge on Algorand. Wormhole's documentation now calls
+  the bridge Wrapped Token Transfers (WTT). The Portal website that used to support Algorand has been shut down, but
+  the bridge contracts on Algorand and the other chains still work. This site lets you use them from your own wallets.
+</p>
+
+<h3>What you can do</h3>
+<ul>
+  <li><a href="/to-algorand/">To Algorand</a>: bridge tokens to Algorand from another chain, with the ASA opt-in when the recipient needs one.</li>
+  <li><a href="/from-algorand/">From Algorand</a>: send Wormhole-wrapped assets held on Algorand, such as WAVAX, WETH or SOL, back to their origin chain.</li>
+  <li><a href="/redeem/">Redeem</a>: finish any transfer on its destination chain, found by source transaction, Wormholescan ID or signed VAA.</li>
+  <li><a href="/activity/">Activity</a>: see the transfers of your wallets or any address, and continue any that were not redeemed.</li>
+  <li><a href="/unwrap/">Unwrap</a>: turn wSOL, WETH, WAVAX, WBNB or WPOL back into the native coin.</li>
+</ul>
+
+<h3>How a transfer works</h3>
+<ol>
+  <li>You send the tokens to the bridge on the source chain. It locks them, or burns them if they are wrapped tokens.</li>
+  <li>
+    Wormhole's guardians sign a message describing the transfer, called a VAA. This usually takes a minute or two. From
+    Ethereum, Arbitrum, Optimism and Base it takes about 20 minutes, until the transaction is final on Ethereum.
+  </li>
+  <li>
+    You redeem the signed transfer on the destination chain, which releases or mints the tokens to the recipient. No
+    relayer is involved, so you pay that chain's transaction fee yourself.
+  </li>
+</ol>
+<p>
+  Nothing is lost if you stop between steps. A signed transfer stays redeemable, and the Activity and Redeem pages find
+  it again later.
+</p>
+
+<h3>Supported chains and wallets</h3>
+<p>
+  Algorand, Solana, Ethereum, BNB Smart Chain, Polygon, Avalanche, Celo, Arbitrum, Optimism and Base. Algorand wallets
+  connect through Pera or Lute. EVM and Solana wallets connect as browser extensions, or from a phone with
+  WalletConnect.
+</p>
+
+<h3>Limits</h3>
+<ul>
+  <li>From Algorand, only Wormhole-wrapped assets can be sent, and each goes back to its origin chain. Native Algorand assets such as ALGO or USDC cannot be sent out here.</li>
+  <li>A token can only be sent to Algorand if it already has a wrapped asset there.</li>
+  <li>Only plain token transfers are supported, not transfers that carry an extra payload for another app.</li>
+</ul>
+
+<h3>Safety</h3>
+<p>
+  The site runs entirely in your browser and never holds your funds. Every transaction that spends from your accounts
+  is signed by your own wallet, and the site simulates transactions before you sign them wherever the chain allows.
+</p>

@@ -1,0 +1,146 @@
+name: CI
+
+# Every push and pull request is checked and built. A push to main also publishes the build as a GitHub Release (a
+# zip, the SHA-256 of every file, the IPFS CID and, once the repository is public, a signed build attestation) and
+# uploads that exact build to Cloudflare Pages. Nothing is rebuilt between the release and the deploy.
+#
+# Settings, under the repository's Actions variables and secrets (a fork sets its own, or none):
+#   vars.SITE_URL                    public address of the site, for canonical links and the sitemap
+#   vars.WALLETCONNECT_PROJECT_ID    WalletConnect project id; without it, WalletConnect is not offered
+#   vars.CLOUDFLARE_PAGES_PROJECT    Pages project to deploy to; without it, nothing is deployed
+#   secrets.CLOUDFLARE_API_TOKEN     token with the "Cloudflare Pages: Edit" permission
+#   secrets.CLOUDFLARE_ACCOUNT_ID    the Cloudflare account that owns the project
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  KUBO: v0.43.1
+  KUBO_SHA512: ff53b2428794fc8cca39505d28c15b4cceaef4b90a09284f291f611fcdc8c06399690575fc89cbd4d85ef71f3652581296c6f2e710386f887c8edf36b6e89d71
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SITE_URL: ${{ vars.SITE_URL }}
+      VITE_WALLETCONNECT_PROJECT_ID: ${{ vars.WALLETCONNECT_PROJECT_ID }}
+    steps:
+      # Actions are pinned to a commit, like the npm packages are pinned to a version.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm audit signatures
+      - run: npm run check
+      - run: npm run build
+      - name: Hash every file
+        run: |
+          (cd dist && find . -type f | LC_ALL=C sort | xargs sha256sum) > SHA256SUMS
+          node --version > NODE_VERSION
+      - name: Compute the IPFS CID
+        run: |
+          cd "$RUNNER_TEMP"
+          curl -fsSLO "https://github.com/ipfs/kubo/releases/download/$KUBO/kubo_${KUBO}_linux-amd64.tar.gz"
+          echo "$KUBO_SHA512  kubo_${KUBO}_linux-amd64.tar.gz" | sha512sum -c -
+          tar xzf "kubo_${KUBO}_linux-amd64.tar.gz"
+          export IPFS_PATH="$RUNNER_TEMP/ipfs"
+          kubo/ipfs init --profile=test --empty-repo > /dev/null
+          kubo/ipfs add --only-hash --recursive --cid-version=1 --quieter "$GITHUB_WORKSPACE/dist" > "$GITHUB_WORKSPACE/CID"
+          echo "CID $(cat "$GITHUB_WORKSPACE/CID")"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: build
+          path: |
+            dist
+            SHA256SUMS
+            CID
+            NODE_VERSION
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: build
+      - name: Package
+        id: package
+        run: |
+          # Releases are named by their UTC build time, such as v2026.10.23-115029; the notes give the commit.
+          tag="v$(date -u +%Y.%m.%d-%H%M%S)"
+          (cd dist && zip -qrX "../wtt-$tag.zip" .)
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      # GitHub only issues attestations for public repositories on this plan.
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        if: ${{ !github.event.repository.private }}
+        with:
+          subject-path: |
+            wtt-${{ steps.package.outputs.tag }}.zip
+            SHA256SUMS
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.package.outputs.tag }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          WALLETCONNECT_PROJECT_ID: ${{ vars.WALLETCONNECT_PROJECT_ID }}
+          PRIVATE: ${{ github.event.repository.private }}
+        run: |
+          attested="Signed with a GitHub build attestation: \`gh attestation verify wtt-$TAG.zip --repo $GITHUB_REPOSITORY\`."
+          [ "$PRIVATE" = true ] && attested='No build attestation: the repository was private when this was built.'
+          cat > notes.md <<EOF
+          The build of commit $GITHUB_SHA, as deployed. $attested
+
+          IPFS CID: \`$(cat CID)\`
+
+          | Asset | Contents |
+          |---|---|
+          | \`wtt-$TAG.zip\` | The whole site, exactly as uploaded to the host |
+          | \`SHA256SUMS\` | The SHA-256 of every file in the zip |
+
+          Build settings: \`SITE_URL=$SITE_URL\`, \`VITE_WALLETCONNECT_PROJECT_ID=$WALLETCONNECT_PROJECT_ID\`, Node $(cat NODE_VERSION).
+          See "Verifying the site" in README.md to check the live site against this release, or to rebuild it yourself.
+          EOF
+          gh release create "$TAG" "wtt-$TAG.zip" SHA256SUMS --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "$TAG" --notes-file notes.md
+
+  deploy:
+    needs: [build, release]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.CLOUDFLARE_PAGES_PROJECT != ''
+    runs-on: ubuntu-latest
+    concurrency: deploy
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: build
+          path: build
+      - run: npm ci --prefix deploy/cloudflare --no-audit --no-fund
+      - name: Upload to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        run: >-
+          deploy/cloudflare/node_modules/.bin/wrangler pages deploy build/dist
+          --project-name "$PROJECT" --branch main --commit-hash "$GITHUB_SHA" --commit-dirty=false
