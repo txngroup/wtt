@@ -17,7 +17,7 @@ export const WORMHOLESCAN_API = 'https://api.wormholescan.io/api/v1'
 export type Chain = {
   id: number // Wormhole chain id
   name: string
-  platform: 'evm' | 'solana'
+  platform: 'evm' | 'solana' | 'near'
   tokenBridge: string
   core: string // core bridge (emits LogMessagePublished on EVM)
   evmChainId?: number
@@ -36,6 +36,7 @@ export const CHAINS: Chain[] = [
   { id: 14, name: 'Celo', platform: 'evm', evmChainId: 42220, tokenBridge: '0x796Dff6D74F3E27060B71255Fe517BFb23C93eed', core: '0xa321448d90d4e5b0A732867c18eA198e75CAC48E', rpc: 'https://celo-rpc.publicnode.com', nativeSymbol: 'CELO', explorerTx: 'https://celoscan.io/tx/' },
   { id: 23, name: 'Arbitrum', platform: 'evm', evmChainId: 42161, tokenBridge: '0x0b2402144Bb366A632D14B83F244D2e0e21bD39c', core: '0xa5f208e072434bC67592E4C49C1B991BA79BCA46', rpc: 'https://arbitrum-one-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://arbiscan.io/tx/' },
   { id: 24, name: 'Optimism', platform: 'evm', evmChainId: 10, tokenBridge: '0x1D68124e65faFC907325e3EDbF8c4d84499DAa8b', core: '0xEe91C335eab126dF5fDB3797EA9d6aD93aeC9722', rpc: 'https://optimism-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://optimistic.etherscan.io/tx/' },
+  { id: 15, name: 'NEAR', platform: 'near', tokenBridge: 'contract.portalbridge.near', core: 'contract.wormhole_crypto.near', nativeSymbol: 'NEAR', explorerTx: 'https://nearblocks.io/txns/' },
   { id: 30, name: 'Base', platform: 'evm', evmChainId: 8453, tokenBridge: '0x8d2de8d2f73F1F4cAB472AC9A881C9b123C79627', core: '0xbebdb6C8ddC678FfA9f8748f85C815C556Dd8ac6', rpc: 'https://base-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://basescan.org/tx/' },
 ]
 

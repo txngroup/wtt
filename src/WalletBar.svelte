@@ -1,16 +1,17 @@
 <script lang="ts">
-  // One place to connect each kind of wallet; every page uses these connections. One card per chain: three across
-  // on wider screens, stacked on phones, where connected wallets fold into a single summary bar.
+  // One place to connect each kind of wallet; every page uses these connections. One card per chain: two by two on
+  // wider screens, stacked on phones, where connected wallets fold into a single summary bar.
   import { onMount, tick, untrack } from 'svelte'
   import { useWallet } from '@txnlab/use-wallet-svelte'
   import { discoverEvmWallets, type EvmWallet } from './lib/evm.ts'
-  import { conn, connectEvmWallet, connectSolanaWallet, disconnectWallet, restoreWallets } from './lib/wallets.svelte.ts'
+  import { conn, connectEvmWallet, connectNearWallet, connectSolanaWallet, disconnectWallet, restoreWallets } from './lib/wallets.svelte.ts'
   import { errorText } from './lib/format.ts'
   import { WALLETCONNECT_PROJECT_ID } from './lib/config.ts'
+  import { qrSvg } from './lib/qr.ts'
   import WalletCard from './WalletCard.svelte'
   import WalletSummary from './WalletSummary.svelte'
 
-  type Kind = 'algo' | 'evm' | 'sol'
+  type Kind = 'algo' | 'evm' | 'sol' | 'near'
   type Pairing = { uri: string; qr: string }
 
   const algo = useWallet()
@@ -20,7 +21,7 @@
   let pairing = $state<Partial<Record<'evm' | 'sol', Pairing>>>({})
   let errors = $state<Partial<Record<Kind, string>>>({})
   // Each attempt gets a number; Cancel moves it on, so a late answer from an abandoned attempt is ignored.
-  const attempts: Record<Kind, number> = { algo: 0, evm: 0, sol: 0 }
+  const attempts: Record<Kind, number> = { algo: 0, evm: 0, sol: 0, near: 0 }
 
   const EXPANDED = 'wallets.expanded'
   let expanded = $state(recallExpanded())
@@ -64,20 +65,17 @@
   function cancel(kind: Kind) {
     attempts[kind]++
     pending[kind] = false
-    if (kind !== 'algo') pairing[kind] = undefined
+    if (kind === 'evm' || kind === 'sol') pairing[kind] = undefined
   }
 
   // Shows a QR code (and a link for wallets on this device), then connects once the mobile wallet approves.
   const walletConnect = (kind: 'evm' | 'sol') =>
     attempt(kind, async (live) => {
-      const [wc, qrcode] = await Promise.all([import('./lib/walletconnect.ts'), import('qrcode-generator')])
+      const wc = await import('./lib/walletconnect.ts')
       const { uri, session } = await wc.pair(kind === 'evm' ? 'evm' : 'solana')
+      const qr = await qrSvg(uri)
       if (!live()) return
-      // Low error correction keeps the code sparse, which phone cameras read more reliably off a screen.
-      const q = qrcode.default(0, 'L')
-      q.addData(uri)
-      q.make()
-      pairing[kind] = { uri, qr: q.createSvgTag({ cellSize: 5, margin: 4 }) }
+      pairing[kind] = { uri, qr }
       const s = await session
       if (!live()) return wc.disconnectSession(s.topic) // approved after Cancel
       pairing[kind] = undefined
@@ -106,9 +104,34 @@
     ...walletConnectOption('sol'),
   ])
 
+  // Meteor: its extension if installed, otherwise its web wallet in a popup, which must open from this click. HOT: its
+  // extension if installed, otherwise the HOT app on a phone or in Telegram, through a QR code.
+  const nearOptions = [
+    {
+      name: 'Meteor',
+      connect: () =>
+        attempt('near', async (live) => {
+          const nw = await nearWallets
+          const w = await nw.connectMeteor()
+          if (live()) connectNearWallet(w)
+        }),
+    },
+    {
+      name: 'HOT',
+      connect: () =>
+        attempt('near', async (live) => {
+          const nw = await nearWallets
+          const w = await nw.connectHot()
+          if (live()) connectNearWallet(w)
+        }),
+    },
+  ]
+  // Loaded ahead of a click, so the Meteor popup can open within it.
+  const nearWallets = import('./lib/near-wallets.ts')
+
   const algoAddress = $derived(algo.activeAddress.current)
-  const restoring = $derived({ algo: !algo.isReady(), evm: !!conn.restoring.evm, sol: !!conn.restoring.sol })
-  const connected = $derived({ algo: !!algoAddress, evm: !!conn.evm, sol: !!conn.sol })
+  const restoring = $derived({ algo: !algo.isReady(), evm: !!conn.restoring.evm, sol: !!conn.restoring.sol, near: !!conn.restoring.near })
+  const connected = $derived({ algo: !!algoAddress, evm: !!conn.evm, sol: !!conn.sol, near: !!conn.near })
   const count = $derived(Object.values(connected).filter(Boolean).length)
 
   const status = (kind: Kind) => (connected[kind] ? 'connected' : restoring[kind] || pending[kind] ? 'connecting' : 'disconnected')
@@ -116,10 +139,10 @@
 
   // Fold on phones once two or more wallets are connected (or being restored) and nothing else is in progress.
   const foldable = $derived(
-    (['algo', 'evm', 'sol'] as Kind[]).filter((k) => connected[k] || restoring[k]).length >= 2 &&
-      !pending.algo && !pending.evm && !pending.sol,
+    (['algo', 'evm', 'sol', 'near'] as Kind[]).filter((k) => connected[k] || restoring[k]).length >= 2 &&
+      !pending.algo && !pending.evm && !pending.sol && !pending.near,
   )
-  const chips = $derived([connected.algo && 'ALGO', connected.evm && 'EVM', connected.sol && 'SOL'].filter((c) => c !== false))
+  const chips = $derived([connected.algo && 'ALGO', connected.evm && 'EVM', connected.sol && 'SOL', connected.near && 'NEAR'].filter((c) => c !== false))
 
   // A page's Connect button (requestConnect): unfold the bar, scroll to the card and open its list of wallets. When
   // that wallet connects, scroll back to the page links, where the page now continues.
@@ -148,7 +171,7 @@
 <section class="wallets" aria-label="Wallets">
   <div class="head" class:foldable>
     <h2>Wallets</h2>
-    <span class="muted">{count} of 3 connected</span>
+    <span class="muted">{count} of 4 connected</span>
   </div>
   {#if foldable}<WalletSummary {chips} controls="wallet-cards" bind:expanded />{/if}
 
@@ -197,6 +220,20 @@
       ondisconnect={() => disconnectWallet('sol')}
       oncancel={() => cancel('sol')}
     />
+    <WalletCard
+      bind:this={cards.near}
+      anchor="wallet-near"
+      chain="NEAR"
+      status={status('near')}
+      statusText={statusText('near')}
+      address={conn.near?.address}
+      walletName={conn.near?.wallet.name}
+      explorer={conn.near && `https://nearblocks.io/address/${conn.near.address}`}
+      error={errors.near}
+      options={restoring.near ? [] : nearOptions}
+      ondisconnect={() => disconnectWallet('near')}
+      oncancel={() => cancel('near')}
+    />
   </div>
 </section>
 
@@ -211,6 +248,6 @@
   }
   @media (min-width: 720px) {
     .wallets { gap: 14px; }
-    .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   }
 </style>

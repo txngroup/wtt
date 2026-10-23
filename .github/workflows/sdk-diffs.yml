@@ -1,0 +1,27 @@
+name: SDK diffs
+
+# Diffs the hand-written transaction builders against the official libraries (npm run test:sdk) on GitHub's throwaway
+# machine, for pull requests that touch them, or by hand. The libraries are pinned in test/sdk and never reach the site.
+# The diffs read mainnet through public RPCs, so a run can fail on an RPC's rate limit; run it again.
+
+on:
+  pull_request:
+    paths: ['src/lib/**', 'test/**', 'scripts/test-sdk*.sh']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --omit=dev --no-audit --no-fund
+      - run: npm run test:sdk

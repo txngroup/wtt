@@ -2,7 +2,7 @@
   import algosdk from 'algosdk'
   import { tick, untrack } from 'svelte'
   import { useWallet } from '@txnlab/use-wallet-svelte'
-  import { CHAINS, chainById, chainName, fetchVaa, ALGORAND } from './lib/wormhole.ts'
+  import { CHAINS, chainById, chainName, fetchVaa, fromHex, ALGORAND } from './lib/wormhole.ts'
   import { ensureEvmChain, waitForEvmReceipt } from './lib/evm.ts'
   import { evmTokenInfo, buildEvmTransfer, nativeFeeReserve, simulateEvmTx, sendEvmTx, sequenceFromReceipt, evmEmitterHex, truncateTo8, type EvmTxRequest } from './lib/evm-send.ts'
   import { algorandAssetForToken } from './lib/algorand-redeem.ts'
@@ -24,6 +24,7 @@
     originAddress: Uint8Array
     evm?: Awaited<ReturnType<typeof evmTokenInfo>>
     solMint?: string
+    nearToken?: string // a Wormhole token on NEAR; undefined for NEAR itself
     feeReserve?: bigint // for the chain's own coin: what Max leaves for fees and rent
   }
 
@@ -37,15 +38,16 @@
   let sendAmt = $state<bigint | undefined>() // the reviewed amount, after truncation to 8 decimals
   let evmPlan = $state<EvmTxRequest[] | undefined>()
   let solPlan = $state<any>()
+  let nearPlan = $state<import('./lib/near.ts').NearTx[] | undefined>()
   let simulation = $state<string | undefined>()
   let log = $state<LogLine[]>([])
   let busy = $state(false)
   let wait = $state<GuardianWait | undefined>()
 
   const chain = $derived(chainById(chainId)!)
-  const source = $derived(chain.platform === 'evm' ? conn.evm : conn.sol)
+  const source = $derived(chain.platform === 'evm' ? conn.evm : chain.platform === 'near' ? conn.near : conn.sol)
   const say = (text: string, cls?: string, href?: string) => (log = [...log, { text, cls, href }])
-  const resetPlan = () => (evmPlan = solPlan = simulation = sendAmt = undefined)
+  const resetPlan = () => (evmPlan = solPlan = nearPlan = simulation = sendAmt = undefined)
   const run = async (f: () => Promise<unknown>) => {
     busy = true
     try {
@@ -61,12 +63,13 @@
     if (!recipient && activeAddress.current) recipient = activeAddress.current
   })
 
-  // Until the user picks a chain, start on the connected wallet's: the EVM wallet's current network, or Solana when
-  // only a Solana wallet is connected. Then the balance of that chain's coin loads without a prompt to switch networks.
+  // Until the user picks a chain, start on the connected wallet's: the EVM wallet's current network, or Solana or NEAR
+  // when only that wallet is connected. Then the balance of that chain's coin loads without a prompt to switch networks.
   let picked = false // the source chain was set, by the user or from a wallet
   $effect(() => {
     const evm = conn.evm?.wallet
     const solana = !!conn.sol
+    const near = !!conn.near
     untrack(async () => {
       if (picked) return
       let id: number | undefined
@@ -74,6 +77,7 @@
         const current = parseInt(String(await evm.provider.request({ method: 'eth_chainId' })), 16)
         id = CHAINS.find((c) => c.evmChainId === current)?.id
       } else if (solana) id = CHAINS.find((c) => c.platform === 'solana')?.id
+      else if (near) id = CHAINS.find((c) => c.platform === 'near')?.id
       if (id === undefined || picked) return
       picked = true
       chainId = id
@@ -116,6 +120,21 @@
         await ensureEvmChain(conn.evm.wallet, chain)
         const t = await evmTokenInfo(conn.evm.wallet, chain, conn.evm.address, tokenInput.trim() || undefined)
         token = { ...t, evm: t, feeReserve: t.native ? await nativeFeeReserve(conn.evm.wallet, chain) : undefined }
+      } else if (chain.platform === 'near') {
+        if (!conn.near) throw new Error('connect a NEAR wallet in the bar above')
+        const near = await import('./lib/near.ts')
+        const account = conn.near.address
+        const input = tokenInput.trim()
+        if (!input) {
+          // NEAR itself. Max keeps back what the bridge transaction can burn in gas (100 TGas), with room to spare.
+          const { available } = await near.nearBalance(account)
+          token = { symbol: 'NEAR', decimals: 24, balance: available, originChain: near.NEAR.chainId, originAddress: new Uint8Array(32), feeReserve: near.ONE_NEAR / 20n }
+        } else {
+          // NEAR's own tokens have no wrapped asset on Algorand, so only Wormhole tokens can go there from NEAR.
+          if (!near.isBridgeToken(input)) throw new Error(`only NEAR itself and Wormhole tokens (<n>.${near.NEAR.tokenBridge}) can be sent from NEAR here`)
+          const [meta, balance, origin] = await Promise.all([near.ftMetadata(input), near.ftBalance(input, account), near.originalAsset(input)])
+          token = { symbol: meta.symbol, decimals: meta.decimals, balance, originChain: origin.chain, originAddress: fromHex(origin.address), nearToken: input }
+        }
       } else {
         if (!conn.sol) throw new Error('connect a Solana wallet in the bar above')
         const { Connection, PublicKey } = await import('./lib/solana-tx.ts')
@@ -187,12 +206,22 @@
       const to = algosdk.decodeAddress(recipient.trim()).publicKey
       const amt = truncateTo8(parseUnits(amount, token.decimals), token.decimals)
       if (amt <= 0n || amt > token.balance) throw new Error('amount must be above zero and at most your balance')
+      // NEAR attaches the amount itself, so what pays for gas has to be left over.
+      if (chain.platform === 'near' && !token.nearToken && amt + (token.feeReserve ?? 0n) > token.balance)
+        throw new Error(`leave about ${approx(token.feeReserve ?? 0n, token.decimals)} NEAR for gas, or use Max`)
       sendAmt = amt
       if (chain.platform === 'evm' && conn.evm) {
         await ensureEvmChain(conn.evm.wallet, chain)
         evmPlan = await buildEvmTransfer(conn.evm.wallet, chain, conn.evm.address, token.evm!, amt, ALGORAND.chainId, to)
         // A transfer that still needs an approval can only be simulated after the approval lands.
         simulation = (await simulateEvmTx(conn.evm.wallet, conn.evm.address, evmPlan[0])) ?? 'ok'
+      } else if (chain.platform === 'near' && conn.near) {
+        // NEAR cannot simulate a transaction. The plan checks the bridge registration, and the balance covers the amount.
+        const near = await import('./lib/near.ts')
+        nearPlan = token.nearToken
+          ? await near.planWrappedTransfer(conn.near.address, token.nearToken, amt, to, ALGORAND.chainId)
+          : [near.nearTransferTx(amt, to, ALGORAND.chainId, await near.messageFee())]
+        simulation = 'ok'
       } else if (conn.sol) {
         const { Connection, PublicKey } = await import('./lib/solana-tx.ts')
         const sol = await import('./lib/solana.ts')
@@ -232,6 +261,18 @@
         }
         sequence = sequenceFromReceipt(chain, receipt)
         emitter = evmEmitterHex(chain)
+      } else if (chain.platform === 'near' && conn.near && nearPlan) {
+        const near = await import('./lib/near.ts')
+        const w = conn.near.wallet
+        say(`Approve ${nearPlan.length === 1 ? 'the transaction' : `${nearPlan.length} transactions`} in ${w.name}.`)
+        const sent = await w.signAndSend(nearPlan)
+        let outcome: any
+        for (const tx of sent) {
+          outcome = await near.waitForNearTx(tx.hash, tx.signer)
+          say(`Sent ${short(tx.hash, 10)}`, '', chain.explorerTx + tx.hash)
+        }
+        sequence = near.sequenceFromNearOutcome(outcome)
+        emitter = near.NEAR.tokenBridgeEmitter
       } else if (conn.sol && solPlan) {
         const { Connection } = await import('./lib/solana-tx.ts')
         const sol = await import('./lib/solana.ts')
@@ -270,12 +311,12 @@
 {#if source}
   <p>Sending from <span class="mono">{source.address}</span></p>
 {:else}
-  <ConnectPrompt kind={chain.platform === 'evm' ? 'evm' : 'sol'} text="Connect {chain.platform === 'evm' ? 'an EVM' : 'a Solana'} wallet to send from {chain.name}." />
+  <ConnectPrompt kind={chain.platform === 'evm' ? 'evm' : chain.platform === 'near' ? 'near' : 'sol'} text="Connect {chain.platform === 'evm' ? 'an EVM' : chain.platform === 'near' ? 'a NEAR' : 'a Solana'} wallet to send from {chain.name}." />
 {/if}
 
 {#if source}
   <h2>2. Token</h2>
-  <label for="token">{chain.platform === 'evm' ? 'ERC-20 address' : 'SPL mint address'} (leave empty for {chain.nativeSymbol})</label>
+  <label for="token">{chain.platform === 'evm' ? 'ERC-20 address' : chain.platform === 'near' ? 'Wormhole token account, such as 9.contract.portalbridge.near for ALGO' : 'SPL mint address'} (leave empty for {chain.nativeSymbol})</label>
   <div class="row">
     <input id="token" bind:value={tokenInput} placeholder={chain.nativeSymbol} />
     <button disabled={busy} onclick={loadToken}>Load</button>
@@ -309,7 +350,7 @@
     <button onclick={() => { amount = formatUnits(maxAmount(token!), token!.decimals); resetPlan() }}>Max</button>
   </div>
   {#if token.feeReserve !== undefined}
-    <p class="muted">Max keeps about {approx(token.feeReserve, token.decimals)} {token.symbol} back for {chain.platform === 'solana' ? 'fees and account rent' : 'gas and the Wormhole fee'}.</p>
+    <p class="muted">Max keeps about {approx(token.feeReserve, token.decimals)} {token.symbol} back for {chain.platform === 'solana' ? 'fees and account rent' : chain.platform === 'near' ? 'gas' : 'gas and the Wormhole fee'}.</p>
   {/if}
   <p class="warn">Send a small test amount first. Bridged funds cannot be recalled.</p>
   <button class="primary" disabled={busy || !amount || !recipient} onclick={review}>Review</button>
@@ -324,7 +365,12 @@
         <tr><th>Send</th><td>{token && sendAmt !== undefined ? formatUnits(sendAmt, token.decimals) : amount} {token?.symbol}</td></tr>
         <tr><th>To</th><td>Algorand <span class="mono">{recipient}</span></td></tr>
         {#if evmPlan}<tr><th>Transactions</th><td>{evmPlan.map((t) => t.label).join(', then ')}</td></tr>{/if}
-        <tr><th>Simulation</th><td class={simulation === 'ok' ? 'ok' : 'err'}>{simulation === 'ok' ? (evmPlan && evmPlan.length > 1 ? `${evmPlan[0].label} passes. The bridge transaction is simulated after the approval confirms.` : 'passes') : simulation}</td></tr>
+        {#if nearPlan}<tr><th>Transactions</th><td>{nearPlan.map((t) => t.label).join(', then ')}</td></tr>{/if}
+        {#if nearPlan}
+          <tr><th>Simulation</th><td>Not available on NEAR. The balance and the bridge registration were checked.</td></tr>
+        {:else}
+          <tr><th>Simulation</th><td class={simulation === 'ok' ? 'ok' : 'err'}>{simulation === 'ok' ? (evmPlan && evmPlan.length > 1 ? `${evmPlan[0].label} passes. The bridge transaction is simulated after the approval confirms.` : 'passes') : simulation}</td></tr>
+        {/if}
       </tbody>
     </table>
   </div>

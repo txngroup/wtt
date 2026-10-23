@@ -9,7 +9,7 @@
   import Log, { type LogLine } from './Log.svelte'
 
   // Chains whose token bridge names a wrapped gas token (Celo has none).
-  const UNWRAPPABLE = CHAINS.filter((c) => c.id !== 14)
+  const UNWRAPPABLE = CHAINS.filter((c) => c.id !== 14 && c.platform !== 'near')
   let chainId = $state(1)
   let token = $state<{ symbol: string; decimals: number; balance: bigint; address?: string } | undefined>()
   let amount = $state('')

@@ -17,7 +17,8 @@ npm run dev
 - Keep the dependency list short. The Wormhole SDK, `@solana/web3.js`, ethers and viem are deliberately not used;
   `src/lib/` holds hand-written equivalents of the parts the app needs.
 - A change to a transaction builder in `src/lib/` needs a matching check in `test/`. For the Solana and Algorand
-  redeem builders, run the SDK diffs in `test/sdk/` and include their output in the pull request.
+  redeem builders and the NEAR transactions, run the SDK diffs (`npm run test:sdk:docker`, or `npm run test:sdk`) and
+  include their output in the pull request.
 - New dependencies are pinned to an exact version at least 14 days old. `.npmrc` enforces this for `npm install`.
 - A new RPC, API or wallet host must also be added to `connect-src` in the Content-Security-Policy in `vite.config.ts`.
 - Match the style of the surrounding code: two-space indent, no semicolons, single quotes, lines up to about 120
