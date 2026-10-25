@@ -23,6 +23,7 @@ const decodeString = (r: string) => {
 
 export type EvmToken = {
   native: boolean // the chain's gas coin (sent with wrapAndTransferETH)
+  gas: boolean // the chain's gas coin, sent either way: what pays for gas comes out of the same balance
   address: string // ERC-20 address (WETH for the gas coin)
   symbol: string
   decimals: number
@@ -32,10 +33,12 @@ export type EvmToken = {
 }
 
 export async function evmTokenInfo(w: EvmWallet, chain: Chain, owner: string, tokenAddress?: string): Promise<EvmToken> {
+  // Celo's bridge has no wrapped gas token, so CELO goes as the ERC-20 token it also is.
+  tokenAddress ||= chain.gasToken
   if (!tokenAddress) {
     const weth = '0x' + (await call(w, chain.tokenBridge, '0x' + sel('WETH()'))).slice(-40)
     const balance = BigInt(await w.provider.request({ method: 'eth_getBalance', params: [owner, 'latest'] }))
-    return { native: true, address: weth, symbol: chain.nativeSymbol, decimals: 18, balance, originChain: chain.id, originAddress: fromAddr(weth) }
+    return { native: true, gas: true, address: weth, symbol: chain.nativeSymbol, decimals: 18, balance, originChain: chain.id, originAddress: fromAddr(weth) }
   }
   if (!/^0x[0-9a-fA-F]{40}$/.test(tokenAddress)) throw new Error('not a valid token address')
   const [decimals, symbol, balance, wrapped] = await Promise.all([
@@ -52,7 +55,8 @@ export async function evmTokenInfo(w: EvmWallet, chain: Chain, owner: string, to
     const nc = (await call(w, tokenAddress, '0x' + sel('nativeContract()'))).replace(/^0x/, '')
     originAddress = Uint8Array.from(nc.match(/../g)!, (x) => parseInt(x, 16))
   }
-  return { native: false, address: tokenAddress, symbol, decimals, balance, originChain, originAddress }
+  const gas = tokenAddress.toLowerCase() === chain.gasToken?.toLowerCase()
+  return { native: false, gas, address: tokenAddress, symbol, decimals, balance, originChain, originAddress }
 }
 
 const fromAddr = (a: string) => {
@@ -62,9 +66,9 @@ const fromAddr = (a: string) => {
 }
 
 // What sending the gas coin costs on top of the amount: the Wormhole message fee, and gas for the bridge call at
-// twice the current gas price (wrapAndTransferETH takes about 100-150k gas; 250k leaves room). Rollups (Arbitrum,
-// Optimism, Base) also charge for posting the transaction to Ethereum, which the gas price leaves out, so the ETH
-// chains keep at least 0.0002 ETH back.
+// twice the current gas price (wrapAndTransferETH takes about 100-150k gas, and CELO's approval and transfer about
+// 160k together; 250k leaves room). Rollups (Arbitrum, Optimism, Base) also charge for posting the transaction to
+// Ethereum, which the gas price leaves out, so the ETH chains keep at least 0.0002 ETH back.
 export async function nativeFeeReserve(w: EvmWallet, chain: Chain) {
   const [fee, price] = await Promise.all([
     call(w, chain.core, '0x' + sel('messageFee()')).then((r) => uintAt(r)),

@@ -266,12 +266,13 @@ export const FACTS: Record<number, Facts> = {
         'Send CELO and EURm from Celo to Algorand through the Wormhole Token Bridge. They are the only Celo tokens ' +
         'with a wrapped asset on Algorand, and each can later go back to Celo.',
       tokens: [
-        { label: 'CELO', assetId: 1618598027 },
+        { label: 'CELO', assetId: 1618598027, coin: true },
         { label: 'EURm (formerly cEUR)', assetId: 891408509 },
       ],
       notes: [
-        'Paste CELO\'s token address to send CELO. Celo\'s token bridge has no wrapped gas token, so CELO travels as ' +
-          'the ERC-20 token it also is, with an approval and then the transfer.',
+        'Celo\'s token bridge has no wrapped gas token, so CELO travels as the ERC-20 token it also is, ' +
+          `<code>${checksum('0x471ece3750da237f93b8e339c536989b8978a438')}</code>. It takes an approval and then the ` +
+          'transfer, and Max keeps back enough CELO for the gas of both.',
         'Celo\'s dollar stablecoin (USDm, formerly cUSD) has no wrapped asset on Algorand, so it cannot be sent there.',
         'Celo has the lowest Governor limits of the chains here, so a transfer over $10,000 waits a day.',
       ],

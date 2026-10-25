@@ -124,7 +124,7 @@
         if (!conn.evm) throw new Error('connect an EVM wallet in the bar above')
         await ensureEvmChain(conn.evm.wallet, chain)
         const t = await evmTokenInfo(conn.evm.wallet, chain, conn.evm.address, tokenInput.trim() || undefined)
-        token = { ...t, evm: t, feeReserve: t.native ? await nativeFeeReserve(conn.evm.wallet, chain) : undefined }
+        token = { ...t, evm: t, feeReserve: t.gas ? await nativeFeeReserve(conn.evm.wallet, chain) : undefined }
       } else if (chain.platform === 'near') {
         if (!conn.near) throw new Error('connect a NEAR wallet in the bar above')
         const near = await import('./lib/near.ts')
@@ -211,9 +211,11 @@
       const to = algosdk.decodeAddress(recipient.trim()).publicKey
       const amt = truncateTo8(parseUnits(amount, token.decimals), token.decimals)
       if (amt <= 0n || amt > token.balance) throw new Error('amount must be above zero and at most your balance')
-      // NEAR attaches the amount itself, so what pays for gas has to be left over.
-      if (chain.platform === 'near' && !token.nearToken && amt + (token.feeReserve ?? 0n) > token.balance)
-        throw new Error(`leave about ${approx(token.feeReserve ?? 0n, token.decimals)} NEAR for gas, or use Max`)
+      // NEAR attaches the amount itself, and CELO's transfer can only be simulated after its approval, so what pays for
+      // gas has to be left over.
+      const leftOver = (chain.platform === 'near' && !token.nearToken) || (token.evm?.gas && !token.evm.native)
+      if (leftOver && amt + (token.feeReserve ?? 0n) > token.balance)
+        throw new Error(`leave about ${approx(token.feeReserve ?? 0n, token.decimals)} ${token.symbol} for gas, or use Max`)
       sendAmt = amt
       if (chain.platform === 'evm' && conn.evm) {
         await ensureEvmChain(conn.evm.wallet, chain)

@@ -67,6 +67,13 @@ export async function isRedeemedOnEvm(w: EvmWallet, chain: Chain, vaa: Vaa) {
   return BigInt(r) === 1n
 }
 
+// When the core contract stops accepting a guardian set's signatures, in Unix seconds, or 0 for the current set.
+// getGuardianSet returns a struct (keys, expirationTime): its offset, the keys' offset, then the time.
+export async function guardianSetExpiryOnEvm(w: EvmWallet, chain: Chain, index: number) {
+  const r = await ethCall(w, chain.core, '0x' + selector('getGuardianSet(uint32)') + index.toString(16).padStart(64, '0'))
+  return Number(BigInt('0x' + (r.replace(/^0x/, '').slice(128, 192) || '0')))
+}
+
 // completeTransferAndUnwrapETH when the token is this chain's wrapped gas token, so the recipient gets native coin.
 export async function redeemCalldata(w: EvmWallet, chain: Chain, vaa: Vaa) {
   const t = vaa.transfer!
