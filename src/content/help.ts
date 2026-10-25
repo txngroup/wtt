@@ -1,6 +1,7 @@
 // The FAQ and the stuck transfers page. Facts checked on mainnet on 25 October 2026, as in routes.ts. The guardian set
-// dates come from the Ethereum core contract's getGuardianSet(): set 6 expired on 27 June 2026, a day after set 7
-// replaced it, and the Algorand core contract enforces the same expiry (wormhole_core.py checks it in verifySigs).
+// dates come from each chain's core contract: set 6 expired on 26 June 2026 on Algorand and most EVM chains, 27 June on
+// Ethereum and 11 July on Solana, a day after each chain took on set 7. test/check-guardian-expiry.ts prints them, and
+// shows Algorand's core contract refusing expired signatures in verifyVAA.
 // "At most 11" current guardians: Wormholescan's observations of Algorand token bridge transfers
 // 8/67e93fa6c8ac5c819990aa7340c0c16b508abb1178be9b30d024b8ac25193d45/1000 (6 of set 7's guardians), /15000 (11) and
 // /18000 (11). Governor rules: whitepapers/0007_governor.md in the Wormhole repository.
@@ -143,8 +144,8 @@ const stuck: Doc = {
 <li>On Solana, every redeem. This site redeems only from the wallet that owns the token account the transfer pays.</li>
 </ul>
 <p>The wallet also needs the destination chain's coin for fees: ALGO on Algorand, ETH on Ethereum, SOL on Solana, and so on.</p>
-<h3>It was signed before late June 2026</h3>
-<p>Wormhole replaced its guardian set in late June 2026, and the bridge contracts stopped accepting signatures from the old set a day later. Algorand, the EVM chains and Solana all enforce this. A transfer signed before then cannot be redeemed with its original signatures, with one exception.</p>
+<h3 id="expired">It was signed before late June 2026</h3>
+<p>Wormhole replaced its guardian set in late June 2026, and the bridge contracts stopped accepting signatures from the old set a day later. Algorand and the EVM chains enforce this from 26 or 27 June, and Solana from 11 July. A transfer signed before then cannot be redeemed with its original signatures, with one exception. The Redeem page says when a transfer's signatures have expired.</p>
 <p>On Solana, a redeem first verifies the signatures and posts the transfer to Solana, then completes it from the posted copy. If the posting happened before the old set expired, the transfer can still be completed: the Redeem page finds the posted copy and goes straight to the last step.</p>
 <p>Otherwise the current guardians have to sign it again first. 16 of the 19 current guardians were also in the previous set, so for a transfer signed by that set, Wormholescan's records may hold enough current signatures to rebuild a valid VAA. Older sets share fewer: in the older transfers we checked, at most 11 current guardians had signed, short of the 13 a VAA needs. Those need the guardians to observe the source transaction again. This site cannot do either yet. Ask Wormhole whether the guardians can sign the transfer again, and include the source transaction and the Wormholescan ID.</p>
 <h3>It carries a payload for another app</h3>

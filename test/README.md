@@ -15,6 +15,8 @@ packages first with `npm ci`.
 | `node test/check-evm.ts test/fixtures/wavax-to-avalanche.vaa.hex test/fixtures/wavax-to-avalanche.avax-calldata.hex` | EVM redeem calldata matches the real Avalanche redeem of that transfer, and redemption status |
 | `node test/check-evm-send.ts <evm address> <eth transfer tx>` | EVM send dry-run from an address holding at least 0.01 AVAX, origin resolution, and the sequence parsed from any Ethereum token bridge transfer, compared with Wormholescan |
 | `node test/sim-verify.mjs test/fixtures/sol-to-solana.vaa.hex [fee payer]` | Solana signature verification simulation |
+| `node test/check-celo-send.ts` | CELO with an empty token field: it goes as its ERC-20 token, resolves to ASA 1618598027, and the approval and bridge transfer simulate on Celo for a made-up owner funded through state overrides |
+| `node test/check-guardian-expiry.ts` | When each destination chain stopped accepting the signatures of guardian sets 4, 6 and 7, that Ethereum and Algorand refuse expired ones in a redeem simulation, and that a VAA already posted on Solana is let through |
 | `node test/sim-solana-send.mjs <owner> <algorand address>` | Solana send simulation and message sequence |
 | `node test/sim-unwrap.mjs <wallet>` | Partial and full wSOL unwrap (wrap then unwrap, simulated) |
 | `node --env-file-if-exists=.env test/check-walletconnect.mjs` | Your WalletConnect project id is accepted by the relay |

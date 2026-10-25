@@ -2,8 +2,8 @@
 // Wormholescan does not always record the redeem (a 2024 transfer to Algorand still shows no target transaction
 // although it was redeemed), so anything it does not mark completed is checked on the destination chain.
 import { ALGORAND, WORMHOLESCAN_API, b64ToBytes, chainById, hex, parseVaa, type Vaa } from './wormhole.ts'
-import { isRedeemedOnAlgorand } from './algorand-redeem.ts'
-import { isRedeemedOnEvm, publicEvmReader } from './evm.ts'
+import { guardianSetExpiryOnAlgorand, isRedeemedOnAlgorand } from './algorand-redeem.ts'
+import { guardianSetExpiryOnEvm, isRedeemedOnEvm, publicEvmReader } from './evm.ts'
 import { accountHash, isNearAccountId } from './near-account.ts'
 
 // unchecked: the destination chain could not be asked (an RPC was down or busy).
@@ -71,6 +71,25 @@ export async function redeemedOnChain(vaa: Vaa): Promise<boolean | undefined> {
     return sol.isRedeemedOnSolana(new Connection(sol.SOLANA_RPC, 'confirmed'), vaa)
   }
   return undefined
+}
+
+// When the destination chain stopped accepting the transfer's signatures, in Unix seconds, or undefined if it still
+// accepts them. Wormhole replaces its guardian set now and then, and each chain accepts the old set's signatures for
+// a day after it takes on the new one. On Solana a transfer posted before then can still be completed from the posted copy. NEAR's core contract
+// has no view of the expiry, so a transfer to NEAR is not checked.
+export async function signaturesExpired(vaa: Vaa): Promise<number | undefined> {
+  const to = vaa.transfer!.toChain
+  const chain = chainById(to)
+  let expiry = 0
+  if (to === ALGORAND.chainId) expiry = await guardianSetExpiryOnAlgorand(vaa.guardianSetIndex)
+  else if (chain?.platform === 'evm') expiry = await guardianSetExpiryOnEvm(publicEvmReader(chain), chain, vaa.guardianSetIndex)
+  else if (chain?.platform === 'solana') {
+    const [{ Connection }, sol] = await Promise.all([import('./solana-tx.ts'), import('./solana.ts')])
+    const conn = new Connection(sol.SOLANA_RPC, 'confirmed')
+    if (await sol.isPostedOnSolana(conn, vaa)) return undefined
+    expiry = await sol.guardianSetExpiryOnSolana(conn, vaa.guardianSetIndex)
+  }
+  return expiry && expiry * 1000 < Date.now() ? expiry : undefined
 }
 
 async function toTransfer(op: Operation): Promise<Transfer> {

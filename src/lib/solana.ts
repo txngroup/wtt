@@ -63,6 +63,17 @@ export async function guardianKeys(conn: Connection, index: number): Promise<Uin
   return Array.from({ length: n }, (_, i) => Uint8Array.from(d.subarray(8 + i * 20, 28 + i * 20)))
 }
 
+// When the core program stops accepting a guardian set's signatures, in Unix seconds, or 0 for the current set.
+export async function guardianSetExpiryOnSolana(conn: Connection, index: number) {
+  const info = await conn.getAccountInfo(guardianSetKey(index))
+  if (!info) return 0
+  const n = view(info.data).getUint32(4, true)
+  return view(info.data).getUint32(8 + n * 20 + 4, true)
+}
+
+// Whether the VAA was already verified and posted, so the redeem only has to complete it from the posted copy.
+export const isPostedOnSolana = async (conn: Connection, vaa: Vaa) => (await conn.getAccountInfo(postedVaaKey(vaa.hash))) !== null
+
 // secp256k1 precompile data: count, then per signature 11 bytes of offsets, then [sig(65) | eth key(20)]..., then message.
 export function secp256k1Data(signatures: Uint8Array[], keys: Uint8Array[], message: Uint8Array) {
   const n = signatures.length
@@ -254,7 +265,7 @@ export async function planRedeem(conn: Connection, owner: PublicKey, vaa: Vaa): 
   }
   const verify: RedeemPlan['verify'] = []
   let post: Transaction | undefined
-  if (!(await conn.getAccountInfo(postedVaaKey(vaa.hash)))) {
+  if (!(await isPostedOnSolana(conn, vaa))) {
     const keys = await guardianKeys(conn, vaa.guardianSetIndex)
     const signatureSet = Keypair.generate()
     const ixs = verifySignaturesInstructions(owner, vaa, keys, signatureSet.publicKey)

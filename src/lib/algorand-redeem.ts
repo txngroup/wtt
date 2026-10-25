@@ -102,6 +102,15 @@ export async function isRedeemedOnAlgorand(v: Vaa) {
   return kv ? (kv.value.bytes[b] & (1 << Number(v.sequence % 8n))) !== 0 : false
 }
 
+// When the core contract stops accepting a guardian set's signatures, in Unix seconds, or 0 for the current set. It
+// keeps the time as 8 bytes at offset 1000 of the set's storage: key 7 (bytes 889 to 1015), at 111.
+export async function guardianSetExpiryOnAlgorand(index: number) {
+  const st = await localState(guardianStorage(index).address().toString(), ALGORAND.coreAppId)
+  const kv = st?.keyValue?.find((x) => x.key.length === 1 && x.key[0] === 7)
+  if (!kv || kv.value.bytes.length < 119) return 0
+  return Number(new DataView(kv.value.bytes.buffer, kv.value.bytes.byteOffset).getBigUint64(111))
+}
+
 export type AlgorandRedeem = {
   txns: algosdk.Transaction[] // grouped
   userIndexes: number[] // signed by the user's wallet

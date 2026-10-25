@@ -3,7 +3,7 @@
   import { onMount } from 'svelte'
   import { useWallet } from '@txnlab/use-wallet-svelte'
   import { chainById, chainName, explorerTxUrl, fetchAlgorandVaa, fetchOperation, fetchOperationById, fetchVaa, parseVaa, sequenceFromAlgorandTxn, b64ToBytes, fromHex, hex, ALGORAND, type Operation, type Vaa } from './lib/wormhole.ts'
-  import { redeemedOnChain } from './lib/activity.ts'
+  import { redeemedOnChain, signaturesExpired } from './lib/activity.ts'
   import ConnectPrompt from './ConnectPrompt.svelte'
   import { algod, simulateSigned } from './lib/algorand.ts'
   import { buildAlgorandRedeem, simulateRedeem, assembleSigned, isRedeemedOnAlgorand } from './lib/algorand-redeem.ts'
@@ -20,6 +20,7 @@
   let vaa = $state<Vaa | undefined>()
   let op = $state<Operation | undefined>() // what Wormholescan knows: symbol, amount, status, redeem transaction
   let redeemed = $state<boolean | undefined>() // from the destination chain; undefined if it could not be checked
+  let expired = $state<number | undefined>() // when the destination chain stopped accepting the signatures, if it has
   let log = $state<LogLine[]>([])
   let busy = $state(false)
 
@@ -42,7 +43,7 @@
   // Accepts a source transaction (Algorand id, EVM hash, Solana signature), a Wormholescan id chain/emitter/sequence,
   // or a raw VAA as hex or base64.
   async function lookup() {
-    vaa = op = redeemed = nearRecipient = undefined
+    vaa = op = redeemed = nearRecipient = expired = undefined
     log = []
     busy = true
     try {
@@ -75,9 +76,10 @@
       // A link or a reload brings the same transfer back. A pasted VAA that Wormholescan does not know stays as typed.
       if (!raw || found) history.replaceState(null, '', `/redeem/?vaa=${opId}`)
       const toNear = chainById(parsed.transfer.toChain)?.platform === 'near'
-      ;[nearRecipient, redeemed] = await Promise.all([
+      ;[nearRecipient, redeemed, expired] = await Promise.all([
         toNear ? import('./lib/near.ts').then((near) => near.accountForHash(parsed.transfer!.to)).catch(() => undefined) : undefined,
         redeemedOnChain(parsed).catch(() => undefined),
+        signaturesExpired(parsed).catch(() => undefined),
       ])
     } catch (e) {
       say(errorText(e), 'err')
@@ -232,6 +234,14 @@
 
   {#if redeemed}
     <p class="ok">This transfer has been redeemed on {chainName(t.toChain)}. There is nothing left to do.</p>
+  {:else if expired}
+    <h2>Signatures expired</h2>
+    <p class="warn">
+      Guardian set {vaa.guardianSetIndex}, an earlier set of Wormhole guardians, signed this transfer. {chainName(t.toChain)}
+      stopped accepting that set's signatures on {new Date(expired * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.
+      A redeem with them would fail. The current guardians have to sign the transfer again first, which this site cannot
+      ask for. See <a href="/stuck-transfers/#expired">stuck transfers</a> for what to do.
+    </p>
   {:else if toAlgorand}
     <h2>Redeem on Algorand</h2>
     <p class="muted">Any Algorand account can pay for the redeem, and the funds always go to the recipient in the transfer. If the recipient has not opted in to the asset yet, redeem from the recipient account, and the site adds the opt-in to the redeem.</p>
