@@ -10,7 +10,7 @@
   import WalletBar from './WalletBar.svelte'
   import ConfirmDialog from './ConfirmDialog.svelte'
   import HotRelayDialog from './HotRelayDialog.svelte'
-  import { PAGES, SITE_NAME, SITE_INTRO } from './pages.ts'
+  import { FOOTER_LINKS, NOT_FOUND, PAGES, SITE_NAME, SITE_INTRO } from './pages.ts'
   import { router, startRouter } from './lib/router.svelte.ts'
   import overview from './overview.html?raw' // bundled site text, also pre-rendered at build time
 
@@ -22,6 +22,7 @@
 
   startRouter()
   const route = $derived(router.route)
+  const page = $derived(PAGES.find((p) => p.id === route.page))
 
   // Arrow keys, Home and End move between the page links, as in a tab row.
   function arrows(e: KeyboardEvent) {
@@ -37,7 +38,8 @@
 
 <main>
   <header>
-    <h1>{SITE_NAME}</h1>
+    <a class="brand" href="/">{SITE_NAME}</a>
+    <h1>{(page ?? NOT_FOUND).heading}</h1>
     <!-- The other pages open on their own task, so the site introduction stays on the overview. -->
     {#if route.page === 'overview'}<p class="muted">{SITE_INTRO}</p>{/if}
   </header>
@@ -65,12 +67,14 @@
     {:else if route.page === 'overview'}
       <article class="overview">{@html overview}</article>
     {:else}
-      <h2>Page not found</h2>
       <p>There is no page at this address. Choose a page above, or start from the <a href="/">overview</a>.</p>
     {/if}
   </section>
 
   <footer class="muted">
+    <p class="links">
+      {#each FOOTER_LINKS as l (l.href)}<a href={l.href}>{l.text}</a>{' '}{/each}
+    </p>
     <p>
       Not affiliated with or endorsed by Wormhole, Portal or the Wormhole Foundation. Bridging cannot be undone, so send a small test
       amount first and check the destination address.
