@@ -37,12 +37,13 @@ h3 { font: 600 .95rem/1.3 var(--mono); margin: 26px 0 8px; }
 :is(.overview, .guide) li { margin: 6px 0; }
 /* Guide tables have column headings, and scroll sideways on a narrow screen rather than the page. */
 .scroll { overflow-x: auto; margin: 12px 0; }
-.guide th { width: auto; }
-.guide td code { word-break: break-all; }
-/* Ids are short: they never break. */
-.guide code.id { word-break: normal; white-space: nowrap; }
-/* On a phone, each row stacks its cells, each under its column's heading. */
-@media (max-width: 520px) {
+.guide th { width: auto; white-space: normal; }
+/* Addresses and ids in a table never break; the text beside them wraps instead. */
+.guide td code { word-break: normal; white-space: nowrap; }
+/* On a phone, each row stacks its cells, each under its column's heading, and an address breaks only if it cannot fit
+   the screen. Ids stay whole. */
+@media (max-width: 640px) {
+  .guide table:not(.keep) td code:not(.id) { white-space: normal; word-break: break-all; font-size: 12px; }
   .guide table:not(.keep) thead { display: none; }
   .guide table:not(.keep) :is(tr, td) { display: block; padding-right: 0; }
   .guide table:not(.keep) td { padding-block: 2px; }
@@ -50,6 +51,13 @@ h3 { font: 600 .95rem/1.3 var(--mono); margin: 26px 0 8px; }
   .guide table:not(.keep) td::before { content: attr(data-label); display: block; font: 11px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
   .guide table:not(.keep) tr + tr > td { border-top: 0; }
   .guide table:not(.keep) tr + tr { border-top: 1px solid var(--line); }
+}
+/* A 44-character Solana address fits on one line down to a 320px screen. */
+@media (max-width: 380px) {
+  .guide table:not(.keep) td code:not(.id) { font-size: 10.5px; }
+}
+@media (max-width: 340px) {
+  .guide table:not(.keep) td code:not(.id) { font-size: 10px; }
 }
 p { margin: 10px 0; }
 code, .mono { font: 13px/1.45 var(--mono); word-break: break-all; }

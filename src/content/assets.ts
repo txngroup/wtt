@@ -19,7 +19,7 @@ const label = (a: Asset) => {
 const row = (a: Asset) => [
   label(a),
   originalToken(a),
-  `${external(`https://allo.info/asset/${a.assetId}`, 'allo.info')}, ${external(`https://vestige.fi/asset/${a.assetId}`, 'Vestige')}`,
+  `${external(`https://allo.info/asset/${a.assetId}`, 'allo.info')}<br>${external(`https://vestige.fi/asset/${a.assetId}`, 'Vestige')}`,
 ]
 
 // In the site's chain order.
