@@ -20,7 +20,9 @@
   let vaa = $state<Vaa | undefined>()
   let op = $state<Operation | undefined>() // what Wormholescan knows: symbol, amount, status, redeem transaction
   let redeemed = $state<boolean | undefined>() // from the destination chain; undefined if it could not be checked
-  let expired = $state<number | undefined>() // when the destination chain stopped accepting the signatures, if it has
+  // When the destination chain stopped accepting the signatures, if it has. The warning needs the chain to say the
+  // transfer is not redeemed: an RPC failure there must not make a finished transfer look stuck.
+  let expired = $state<number | undefined>()
   let log = $state<LogLine[]>([])
   let busy = $state(false)
 
@@ -234,7 +236,7 @@
 
   {#if redeemed}
     <p class="ok">This transfer has been redeemed on {chainName(t.toChain)}. There is nothing left to do.</p>
-  {:else if expired}
+  {:else if expired && redeemed === false}
     <h2>Signatures expired</h2>
     <p class="warn">
       Guardian set {vaa.guardianSetIndex}, an earlier set of Wormhole guardians, signed this transfer. {chainName(t.toChain)}
