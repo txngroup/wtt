@@ -8,15 +8,16 @@ import { esc, type Doc } from './doc.ts'
 import { CHECKED, external, fromPath, originalToken, table, type Asset } from './routes.ts'
 
 
+// Unit name, then the name (unless it only repeats the unit name) and the ASA id underneath.
 const label = (a: Asset) => {
   const unit = a.unitName.trim()
   const name = a.name.trim()
-  return unit && name ? `${esc(unit)}<br><span class="muted">${esc(name)}</span>` : esc(unit || name || '(no name)')
+  const title = unit && name && unit.toLowerCase() !== name.toLowerCase() ? `${esc(unit)}<br><span class="muted">${esc(name)}</span>` : esc(unit || name || '(no name)')
+  return `${title}<br><span class="muted">ASA <code class="id">${a.assetId}</code></span>`
 }
 
 const row = (a: Asset) => [
   label(a),
-  `<code>${a.assetId}</code>`,
   originalToken(a),
   `${external(`https://allo.info/asset/${a.assetId}`, 'allo.info')}, ${external(`https://vestige.fi/asset/${a.assetId}`, 'Vestige')}`,
 ]
@@ -34,7 +35,7 @@ const sections = byChain
   .map(
     ({ c, assets }) => `<h2 id="${c.slug}">From ${esc(c.name)}</h2>
 <p>To send them back, see the <a href="${fromPath(c)}">Algorand to ${esc(c.name)} bridge</a>.</p>
-${table(['Asset', 'ASA', `Original token on ${esc(c.name)}`, 'Look up'], assets.map(row))}`,
+${table(['Asset', `Original token on ${esc(c.name)}`, 'Look up'], assets.map(row))}`,
   )
   .join('\n')
 

@@ -39,6 +39,8 @@ h3 { font: 600 .95rem/1.3 var(--mono); margin: 26px 0 8px; }
 .scroll { overflow-x: auto; margin: 12px 0; }
 .guide th { width: auto; }
 .guide td code { word-break: break-all; }
+/* Ids are short: they never break. */
+.guide code.id { word-break: normal; white-space: nowrap; }
 /* On a phone, each row stacks its cells, each under its column's heading. */
 @media (max-width: 520px) {
   .guide table:not(.keep) thead { display: none; }
