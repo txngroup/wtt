@@ -1,16 +1,15 @@
 import { readFileSync } from 'node:fs'
 import { defineConfig, loadEnv, type Plugin } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
-import { FOOTER_LINKS, NOT_FOUND, PAGES, REPO_URL, SITE_NAME, SITE_INTRO, pageForPath, type Page } from './src/pages.ts'
+import { FOOTER_LINKS, NOT_FOUND, PAGES, REPO_URL, SITE_NAME, SITE_INTRO, byPath, pageForPath, type Page } from './src/pages.ts'
 import { esc, type Doc } from './src/content/doc.ts'
-import { ROUTE_DOCS } from './src/content/routes.ts'
+import { ROUTE_DOCS, ROUTES } from './src/content/routes.ts'
 import { HELP_DOCS } from './src/content/help.ts'
 import { ASSETS_DOC } from './src/content/assets.ts'
 
 // The guide pages, which have no tab: the route index and a page per route, the wrapped assets, the FAQ and stuck
 // transfers.
 const DOCS = [...ROUTE_DOCS, ASSETS_DOC, ...HELP_DOCS]
-const ROUTES = ROUTE_DOCS[0]
 
 // The site's security headers. The build writes them to dist/_headers, which Cloudflare Pages and Netlify read, and adds
 // the Content-Security-Policy to every page as a <meta> tag for hosts that cannot send headers, such as IPFS gateways.
@@ -126,6 +125,9 @@ function head({ page, doc }: Target, siteUrl: string) {
 
 // The overview's text, shared with the app (App.svelte imports it too).
 const overview = readFileSync(new URL('./src/overview.html', import.meta.url), 'utf8')
+// Its list of route pages is written by hand, so a route page it does not link to stops the build.
+const unlinked = ROUTE_DOCS.filter((d) => d !== ROUTES && !overview.includes(`href="${d.path}"`)).map((d) => d.path)
+if (unlinked.length) throw new Error(`src/overview.html does not link to ${unlinked.join(', ')}`)
 
 // What crawlers and no-JavaScript visitors see, and all there is of a guide page: the same header, tabs and footer as
 // the app, and the page's text (for an app page, its purpose; the full text for the overview).
@@ -165,8 +167,7 @@ const render = (html: string, t: Target, siteUrl: string, dev = false) => {
 
 const targetFor = (path: string): Target => {
   const page = pageForPath(path)
-  const dir = path.replace(/index\.html$/, '')
-  return page ? { page } : { doc: DOCS.find((d) => d.path === dir || d.path === dir + '/') }
+  return page ? { page } : { doc: byPath(DOCS, path) }
 }
 
 // The root page is rendered in place; every other page gets its own <path>/index.html, plus 404.html, _headers,

@@ -68,7 +68,9 @@
 
   // Until the user picks a chain, start on the connected wallet's: the EVM wallet's current network, or Solana or NEAR
   // when only that wallet is connected. Then the balance of that chain's coin loads without a prompt to switch networks.
-  let picked = !!fromParam // the source chain was set, by the user, a link or a wallet
+  // A link that chose the chain keeps it: the balance loads by itself only if the wallet is already on that chain, and
+  // otherwise waits for Load, so a network switch is only ever asked for by the user.
+  let picked = false // the source chain was set, by the user or from a wallet, and its coin may load by itself
   $effect(() => {
     const evm = conn.evm?.wallet
     const solana = !!conn.sol
@@ -81,7 +83,7 @@
         id = CHAINS.find((c) => c.evmChainId === current)?.id
       } else if (solana) id = CHAINS.find((c) => c.platform === 'solana')?.id
       else if (near) id = CHAINS.find((c) => c.platform === 'near')?.id
-      if (id === undefined || picked) return
+      if (id === undefined || picked || (fromParam && id !== chainId)) return
       picked = true
       chainId = id
       autoLoad()
@@ -289,11 +291,10 @@
       } else return
       const id = `${chain.id}/${emitter}/${sequence}`
       say(`Wormhole sequence ${sequence}.`, 'ok')
-      const slow = [2, 14, 23, 24, 30].includes(chain.id) // these wait for Ethereum finality
       const w: GuardianWait = {
         state: 'waiting',
         since: Date.now(),
-        expected: slow ? 'This takes about 15 to 30 minutes, until the transaction is final on Ethereum.' : 'This usually takes under a minute.',
+        expected: chain.slow ? 'This takes about 15 to 30 minutes, until the transaction is final on Ethereum.' : 'This usually takes under a minute.',
         dest: 'Algorand',
         link: `/redeem/?vaa=${id}`,
         id,

@@ -24,21 +24,22 @@ export type Chain = {
   evmChainId?: number
   rpc?: string // public CORS-enabled RPC, used for reads when the wallet is connected over WalletConnect
   nativeSymbol: string
+  slow?: boolean // the guardians wait for the transfer to be final on Ethereum, which takes 15 to 30 minutes
   explorerTx: string // prefix; append the tx hash
 }
 
 // Destinations whose token bridge has Algorand's emitter registered (checked on-chain 2026-10-21).
 export const CHAINS: Chain[] = [
   { id: 1, name: 'Solana', slug: 'solana', platform: 'solana', tokenBridge: 'wormDTUJ6AWPNvk59vGQbDvGJmqbDTdgWgAqcLBCgUb', core: 'worm2ZoG2kUd4vFXhvjh93UUH596ayRfgQ2MgjNMTth', nativeSymbol: 'SOL', explorerTx: 'https://solscan.io/tx/' },
-  { id: 2, name: 'Ethereum', slug: 'ethereum', platform: 'evm', evmChainId: 1, tokenBridge: '0x3ee18B2214AFF97000D974cf647E7C347E8fa585', core: '0x98f3c9e6E3fAce36bAAd05FE09d375Ef1464288B', rpc: 'https://ethereum-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://etherscan.io/tx/' },
+  { id: 2, name: 'Ethereum', slug: 'ethereum', slow: true, platform: 'evm', evmChainId: 1, tokenBridge: '0x3ee18B2214AFF97000D974cf647E7C347E8fa585', core: '0x98f3c9e6E3fAce36bAAd05FE09d375Ef1464288B', rpc: 'https://ethereum-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://etherscan.io/tx/' },
   { id: 4, name: 'BNB Smart Chain', slug: 'bnb', platform: 'evm', evmChainId: 56, tokenBridge: '0xB6F6D86a8f9879A9c87f643768d9efc38c1Da6E7', core: '0x98f3c9e6E3fAce36bAAd05FE09d375Ef1464288B', rpc: 'https://bsc-rpc.publicnode.com', nativeSymbol: 'BNB', explorerTx: 'https://bscscan.com/tx/' },
   { id: 5, name: 'Polygon', slug: 'polygon', platform: 'evm', evmChainId: 137, tokenBridge: '0x5a58505a96D1dbf8dF91cB21B54419FC36e93fdE', core: '0x7A4B5a56256163F07b2C80A7cA55aBE66c4ec4d7', rpc: 'https://polygon-bor-rpc.publicnode.com', nativeSymbol: 'POL', explorerTx: 'https://polygonscan.com/tx/' },
   { id: 6, name: 'Avalanche', slug: 'avalanche', platform: 'evm', evmChainId: 43114, tokenBridge: '0x0e082F06FF657D94310cB8cE8B0D9a04541d8052', core: '0x54a8e5f9c4CbA08F9943965859F6c34eAF03E26c', rpc: 'https://avalanche-c-chain-rpc.publicnode.com', nativeSymbol: 'AVAX', explorerTx: 'https://snowtrace.io/tx/' },
-  { id: 14, name: 'Celo', slug: 'celo', platform: 'evm', evmChainId: 42220, tokenBridge: '0x796Dff6D74F3E27060B71255Fe517BFb23C93eed', core: '0xa321448d90d4e5b0A732867c18eA198e75CAC48E', rpc: 'https://celo-rpc.publicnode.com', nativeSymbol: 'CELO', explorerTx: 'https://celoscan.io/tx/' },
-  { id: 23, name: 'Arbitrum', slug: 'arbitrum', platform: 'evm', evmChainId: 42161, tokenBridge: '0x0b2402144Bb366A632D14B83F244D2e0e21bD39c', core: '0xa5f208e072434bC67592E4C49C1B991BA79BCA46', rpc: 'https://arbitrum-one-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://arbiscan.io/tx/' },
-  { id: 24, name: 'Optimism', slug: 'optimism', platform: 'evm', evmChainId: 10, tokenBridge: '0x1D68124e65faFC907325e3EDbF8c4d84499DAa8b', core: '0xEe91C335eab126dF5fDB3797EA9d6aD93aeC9722', rpc: 'https://optimism-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://optimistic.etherscan.io/tx/' },
+  { id: 14, name: 'Celo', slug: 'celo', slow: true, platform: 'evm', evmChainId: 42220, tokenBridge: '0x796Dff6D74F3E27060B71255Fe517BFb23C93eed', core: '0xa321448d90d4e5b0A732867c18eA198e75CAC48E', rpc: 'https://celo-rpc.publicnode.com', nativeSymbol: 'CELO', explorerTx: 'https://celoscan.io/tx/' },
+  { id: 23, name: 'Arbitrum', slug: 'arbitrum', slow: true, platform: 'evm', evmChainId: 42161, tokenBridge: '0x0b2402144Bb366A632D14B83F244D2e0e21bD39c', core: '0xa5f208e072434bC67592E4C49C1B991BA79BCA46', rpc: 'https://arbitrum-one-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://arbiscan.io/tx/' },
+  { id: 24, name: 'Optimism', slug: 'optimism', slow: true, platform: 'evm', evmChainId: 10, tokenBridge: '0x1D68124e65faFC907325e3EDbF8c4d84499DAa8b', core: '0xEe91C335eab126dF5fDB3797EA9d6aD93aeC9722', rpc: 'https://optimism-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://optimistic.etherscan.io/tx/' },
   { id: 15, name: 'NEAR', slug: 'near', platform: 'near', tokenBridge: 'contract.portalbridge.near', core: 'contract.wormhole_crypto.near', nativeSymbol: 'NEAR', explorerTx: 'https://nearblocks.io/txns/' },
-  { id: 30, name: 'Base', slug: 'base', platform: 'evm', evmChainId: 8453, tokenBridge: '0x8d2de8d2f73F1F4cAB472AC9A881C9b123C79627', core: '0xbebdb6C8ddC678FfA9f8748f85C815C556Dd8ac6', rpc: 'https://base-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://basescan.org/tx/' },
+  { id: 30, name: 'Base', slug: 'base', slow: true, platform: 'evm', evmChainId: 8453, tokenBridge: '0x8d2de8d2f73F1F4cAB472AC9A881C9b123C79627', core: '0xbebdb6C8ddC678FfA9f8748f85C815C556Dd8ac6', rpc: 'https://base-rpc.publicnode.com', nativeSymbol: 'ETH', explorerTx: 'https://basescan.org/tx/' },
 ]
 
 export const chainById = (id: number) => CHAINS.find((c) => c.id === id)

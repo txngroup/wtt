@@ -12,13 +12,33 @@ const ALGOD = 'https://mainnet-api.algonode.cloud'
 const APP = 842126029
 const BRIDGE = 'M7UT7JWIVROIDGMQVJZUBQGBNNIIVOYRPC7JWMGQES4KYJIZHVCRZEGFRQ'
 
+// A GET that tries again, up to five times, after a rate limit, a server error or a dropped connection.
 async function get(url) {
   for (let i = 0; ; i++) {
-    const r = await fetch(url)
-    if (r.ok) return r.json()
-    if (i === 4 || (r.status !== 429 && r.status < 500)) throw new Error(`${url}: HTTP ${r.status}`)
+    let r
+    try {
+      r = await fetch(url)
+    } catch (e) {
+      if (i === 4) throw e
+    }
+    if (r?.ok) return r.json()
+    if (r && (i === 4 || (r.status !== 429 && r.status < 500))) throw new Error(`${url}: HTTP ${r.status}`)
     await new Promise((res) => setTimeout(res, 1000 * (i + 1)))
   }
+}
+
+// f over every item, at most `limit` at a time, results in order.
+async function pool(items, limit, f) {
+  const out = []
+  let next = 0
+  const worker = async () => {
+    while (next < items.length) {
+      const i = next++
+      out[i] = await f(items[i])
+    }
+  }
+  await Promise.all(Array.from({ length: limit }, worker))
+  return out
 }
 
 const creators = []
@@ -31,8 +51,8 @@ do {
 } while (next)
 
 const b64 = (s) => Buffer.from(s, 'base64')
-const assets = []
-for (const creator of creators) {
+// Eight storage accounts at a time.
+const found = await pool(creators, 8, async (creator) => {
   const [created, local] = await Promise.all([
     get(`${IDX}/v2/accounts/${creator}/created-assets?include-all=false`),
     get(`${ALGOD}/v2/accounts/${creator}/applications/${APP}`),
@@ -42,19 +62,20 @@ for (const creator of creators) {
     .filter((kv) => !(kv.key.length === 4 && kv.key.toString() === 'meta'))
     .sort((a, b) => a.key[0] - b.key[0])
   const blob = Buffer.concat(kvs.map((kv) => kv.value))
-  if (blob.length < 94) continue
+  if (blob.length < 94) return undefined
   const assetId = Number(blob.readBigUInt64BE(0))
   const asset = created.assets.find((a) => a.index === assetId)
-  if (!asset || asset.params.manager !== BRIDGE || asset.params.reserve !== creator) continue
-  assets.push({
+  if (!asset || asset.params.manager !== BRIDGE || asset.params.reserve !== creator) return undefined
+  return {
     assetId,
     unitName: asset.params['unit-name'] ?? '',
     name: asset.params.name ?? '',
     decimals: asset.params.decimals,
     originChain: blob.readUInt16BE(92),
     originAddress: blob.subarray(60, 92).toString('hex'),
-  })
-}
+  }
+})
+const assets = found.filter(Boolean)
 assets.sort((a, b) => a.originChain - b.originChain || a.assetId - b.assetId)
 // Non-ASCII characters in asset names are written as \u escapes, so the file stays ASCII.
 const json = JSON.stringify({ checked: new Date().toISOString().slice(0, 10), assets }, null, 2)

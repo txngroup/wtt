@@ -90,10 +90,11 @@ export const PAGES: Page[] = [
 
 // Each page is built as <name>/index.html, so its path ends in a slash. Links without the slash, or ending in
 // index.html, find the same page.
-export const pageForPath = (path: string) => {
+export const byPath = <T extends { path: string }>(list: T[], path: string) => {
   const dir = path.replace(/index\.html$/, '')
-  return PAGES.find((p) => p.path === dir || p.path === dir + '/')
+  return list.find((p) => p.path === dir || p.path === dir + '/')
 }
+export const pageForPath = (path: string) => byPath(PAGES, path)
 
 // Any other path. The build writes this page as 404.html, which hosts serve with a 404 status, so search engines drop
 // a mistyped or outdated address instead of indexing it as a copy of another page.

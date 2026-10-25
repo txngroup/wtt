@@ -53,7 +53,6 @@
   const unfinished = $derived(transfers?.filter((t) => t.status === 'ready').length ?? 0)
 </script>
 
-<h2>Activity</h2>
 <p class="muted">
   Token Bridge transfers to and from Algorand for your connected wallets, newest first, from Wormholescan. Anything
   not yet redeemed is checked on its destination chain. Use Continue to finish a transfer you left part way.

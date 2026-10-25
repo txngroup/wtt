@@ -23,7 +23,7 @@ const asset = (id: number) => {
   return a
 }
 const fromChain = (chain: number) => wrapped.assets.filter((a) => a.originChain === chain)
-const usd = (n: number) => '$' + n.toLocaleString('en-US')
+export const usd = (n: number) => '$' + n.toLocaleString('en-US')
 export const asaLink = (id: number) => `<a href="https://allo.info/asset/${id}" target="_blank" rel="noreferrer">ASA ${id}</a>`
 
 // A token that can be sent from the chain to Algorand. Its address comes from the wrapped asset's origin; the chain's
@@ -66,7 +66,6 @@ const wrappedAlgoAddress = (c: Chain, f: Facts) => (f.wrappedAlgo && c.platform 
 type Facts = {
   wallets: string // how a wallet on the chain connects
   wait: string // how long the guardians take to sign a transfer from the chain
-  slow: boolean // the chain waits for Ethereum finality
   governor: [number, number] // Wormhole Governor: one transfer, and all transfers in 24 hours, in USD
   tokenInput: string // what to paste on the To Algorand page for a token other than the chain's own coin
   redeem: string // what redeeming on the chain takes
@@ -81,7 +80,8 @@ const evmRedeem = (gas: string) =>
   `The redeem is one transaction on the destination chain, and the wallet that sends it pays the gas in ${gas}. Any ` +
   'wallet can redeem: the tokens always go to the recipient in the transfer.'
 const FAST = 'Wormhole guardians usually sign a transfer from this chain within about 15 seconds.'
-const slow = (median: number, lo: number, hi: number) =>
+// For the chains that wait for Ethereum finality (Chain.slow).
+const final = (median: number, lo: number, hi: number) =>
   `Wormhole guardians sign a transfer from this chain only once its block is final on Ethereum. In recent transfers ` +
   `that took about ${median} minutes (from ${lo} to ${hi}).`
 const ERC20 = 'To send an ERC-20 token, paste its contract address on the To Algorand page.'
@@ -96,7 +96,6 @@ export const FACTS: Record<number, Facts> = {
   1: {
     wallets: 'any Solana browser wallet that supports the Wallet Standard, such as Phantom, Solflare or Backpack, or a phone wallet through WalletConnect',
     wait: FAST,
-    slow: false,
     governor: [1_000_000, 20_000_000],
     tokenInput: 'To send an SPL token, paste its mint address on the To Algorand page. Token-2022 tokens are not supported.',
     redeem:
@@ -133,8 +132,7 @@ export const FACTS: Record<number, Facts> = {
   },
   2: {
     wallets: EVM_WALLETS,
-    wait: slow(16, 14, 19),
-    slow: true,
+    wait: final(16, 14, 19),
     governor: [1_000_000, 10_000_000],
     tokenInput: ERC20,
     redeem: evmRedeem('ETH'),
@@ -166,7 +164,6 @@ export const FACTS: Record<number, Facts> = {
   4: {
     wallets: EVM_WALLETS,
     wait: FAST,
-    slow: false,
     governor: [100_000, 1_000_000],
     tokenInput: ERC20,
     redeem: evmRedeem('BNB'),
@@ -199,7 +196,6 @@ export const FACTS: Record<number, Facts> = {
   5: {
     wallets: EVM_WALLETS,
     wait: FAST,
-    slow: false,
     governor: [100_000, 1_000_000],
     tokenInput: ERC20,
     redeem: evmRedeem('POL'),
@@ -233,7 +229,6 @@ export const FACTS: Record<number, Facts> = {
   6: {
     wallets: EVM_WALLETS,
     wait: FAST,
-    slow: false,
     governor: [100_000, 1_000_000],
     tokenInput: ERC20,
     redeem: evmRedeem('AVAX'),
@@ -260,8 +255,7 @@ export const FACTS: Record<number, Facts> = {
   },
   14: {
     wallets: EVM_WALLETS,
-    wait: slow(23, 15, 29),
-    slow: true,
+    wait: final(23, 15, 29),
     governor: [10_000, 10_000],
     tokenInput: ERC20,
     redeem: evmRedeem('CELO'),
@@ -292,7 +286,6 @@ export const FACTS: Record<number, Facts> = {
   15: {
     wallets: 'Meteor or HOT, as a browser extension, Meteor\'s web wallet, or the HOT app through a QR code. WalletConnect is not offered for NEAR',
     wait: FAST,
-    slow: false,
     governor: [10_000, 100_000],
     tokenInput:
       'For a Wormhole token on NEAR, paste its token account, which ends in .contract.portalbridge.near, on the To ' +
@@ -333,8 +326,7 @@ export const FACTS: Record<number, Facts> = {
   },
   23: {
     wallets: EVM_WALLETS,
-    wait: slow(18, 14, 23),
-    slow: true,
+    wait: final(18, 14, 23),
     governor: [250_000, 2_500_000],
     tokenInput: ERC20,
     redeem: evmRedeem('ETH'),
@@ -367,8 +359,7 @@ export const FACTS: Record<number, Facts> = {
   },
   24: {
     wallets: EVM_WALLETS,
-    wait: slow(21, 17, 27),
-    slow: true,
+    wait: final(21, 17, 27),
     governor: [100_000, 1_000_000],
     tokenInput: ERC20,
     redeem: evmRedeem('ETH'),
@@ -398,8 +389,7 @@ export const FACTS: Record<number, Facts> = {
   },
   30: {
     wallets: EVM_WALLETS,
-    wait: slow(21, 17, 24),
-    slow: true,
+    wait: final(21, 17, 24),
     governor: [250_000, 2_500_000],
     tokenInput: ERC20,
     redeem: evmRedeem('ETH'),
@@ -433,7 +423,7 @@ export const FACTS: Record<number, Facts> = {
 export const toPath = (c: Chain) => `/${c.slug}-algorand-bridge/`
 export const fromPath = (c: Chain) => `/algorand-${c.slug}-bridge/`
 
-const ALGORAND_GOVERNOR: [number, number] = [10_000, 100_000]
+export const ALGORAND_GOVERNOR: [number, number] = [10_000, 100_000]
 const governor = (from: string, [one, day]: [number, number]) =>
   `<p>Wormhole's Governor holds a single transfer worth more than ${usd(one)} from ${from} for 24 hours. When more ` +
   `than ${usd(day)} in all has left ${from} in the past 24 hours, later transfers wait until there is room again. ` +
@@ -494,8 +484,9 @@ ${others(c)}`
     title: `${c.name} to Algorand Bridge (Wormhole) - Algorand WTT`,
     heading: `${c.name} to Algorand bridge`,
     description:
-      `Bridge ${names.join(', ')} and more from ${c.name} to Algorand with the Wormhole Token Bridge: which tokens ` +
-      `work, how long it takes (${f.slow ? 'about 20 minutes' : 'under a minute'}) and the steps.`,
+      `Bridge ${total > names.length ? `${names.join(', ')} and more` : names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0]} ` +
+      `from ${c.name} to Algorand with the Wormhole Token ` +
+      `Bridge: which tokens work, how long it takes (${c.slow ? '15 to 30 minutes' : 'under a minute'}) and the steps.`,
     html,
     crumbs: true,
   }
@@ -546,7 +537,7 @@ function index(): Doc {
     esc(c.name),
     `<a href="${toPath(c)}">${esc(c.name)} to Algorand</a>`,
     `<a href="${fromPath(c)}">Algorand to ${esc(c.name)}</a>`,
-    FACTS[c.id].slow ? 'About 20 minutes' : 'Under a minute',
+    c.slow ? '15 to 30 minutes' : 'Under a minute',
   ])
   const html = `<p>This site bridges tokens between Algorand and ${CHAINS.length} other chains through the Wormhole Token Bridge. Each route has its own page: which tokens can go, how long it takes, and the steps.</p>
 ${table(['Chain', 'To Algorand', 'From Algorand', 'Signing wait'], rows)}
@@ -568,4 +559,6 @@ ${table(['Chain', 'To Algorand', 'From Algorand', 'Signing wait'], rows)}
   }
 }
 
-export const ROUTE_DOCS: Doc[] = [index(), ...CHAINS.flatMap((c) => [toAlgorand(c), fromAlgorand(c)])]
+// The route index, which the route pages' breadcrumbs lead back to.
+export const ROUTES = index()
+export const ROUTE_DOCS: Doc[] = [ROUTES, ...CHAINS.flatMap((c) => [toAlgorand(c), fromAlgorand(c)])]

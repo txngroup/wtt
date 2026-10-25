@@ -2,12 +2,12 @@
 // dates come from the Ethereum core contract's getGuardianSet(): set 6 expired on 27 June 2026, a day after set 7
 // replaced it, and the Algorand core contract enforces the same expiry (wormhole_core.py checks it in verifySigs).
 import { CHAINS } from '../lib/wormhole.ts'
-import { CHECKED } from './routes.ts'
+import { ALGORAND_GOVERNOR, CHECKED, usd } from './routes.ts'
 import type { Doc } from './doc.ts'
 import { REPO_URL } from '../pages.ts'
 
-const SLOW = CHAINS.filter((c) => [2, 14, 23, 24, 30].includes(c.id)).map((c) => c.name)
-const FAST = ['Algorand', ...CHAINS.filter((c) => !SLOW.includes(c.name)).map((c) => c.name)]
+const SLOW = CHAINS.filter((c) => c.slow).map((c) => c.name)
+const FAST = ['Algorand', ...CHAINS.filter((c) => !c.slow).map((c) => c.name)]
 const names = (l: string[]) => l.slice(0, -1).join(', ') + ' and ' + l.at(-1)
 
 const FAQ: { q: string; a: string }[] = [
@@ -68,7 +68,7 @@ const FAQ: { q: string; a: string }[] = [
   {
     q: 'Why is my transfer held for 24 hours?',
     a: 'Wormhole\'s Governor holds a transfer when it is worth more than a set amount, or when too much value has left ' +
-      'the source chain in the past 24 hours. From Algorand the limits are $10,000 for one transfer and $100,000 a day. ' +
+      `the source chain in the past 24 hours. From Algorand the limits are ${usd(ALGORAND_GOVERNOR[0])} for one transfer and ${usd(ALGORAND_GOVERNOR[1])} a day. ` +
       'The guardians sign a held transfer when the hold ends, and you redeem it as usual.',
   },
   {
