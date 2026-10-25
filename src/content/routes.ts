@@ -2,7 +2,7 @@
 // (NEAR to Algorand) and /algorand-near-bridge/ (Algorand to NEAR), and an index of them at /bridges/.
 //
 // Every fact here was checked on mainnet on 25 October 2026:
-// - Tokens and amounts: scripts/wrapped-assets.mjs, which wrote wrapped-assets.json. Each origin address was checked on
+// - Tokens: scripts/wrapped-assets.mjs, which wrote wrapped-assets.json. Each origin address was checked on
 //   its chain (symbol() on EVM chains, the mint on Solana).
 // - Wait times: Wormholescan's indexedAt less the VAA timestamp, over the 40 latest token bridge transfers from each
 //   chain.
@@ -23,12 +23,6 @@ const asset = (id: number) => {
   return a
 }
 const fromChain = (chain: number) => wrapped.assets.filter((a) => a.originChain === chain)
-export const held = (a: Asset) => BigInt(a.circulating) > 0n
-// An amount in base units, with thousands separators and at most four decimals.
-export const amount = (a: Asset) => {
-  const n = Number(BigInt(a.circulating)) / 10 ** a.decimals
-  return n.toLocaleString('en-US', { maximumFractionDigits: 4 })
-}
 const usd = (n: number) => '$' + n.toLocaleString('en-US')
 export const asaLink = (id: number) => `<a href="https://allo.info/asset/${id}" target="_blank" rel="noreferrer">ASA ${id}</a>`
 
@@ -55,6 +49,18 @@ export function base58(hex: string) {
 // A token's address on its own chain, in that chain's usual form.
 const originAddress = (c: Chain, a: Asset) =>
   c.platform === 'evm' ? checksum(a.originAddress.slice(24)) : c.platform === 'solana' ? base58(a.originAddress) : a.originAddress
+export const external = (href: string, text: string) => `<a href="${href}" target="_blank" rel="noreferrer">${text}</a>`
+// The original token of a wrapped asset, linked to its chain's explorer where this site supports the chain, else its
+// 32-byte Wormhole address. NEAR's own coin has no token address.
+export function originalToken(a: Asset) {
+  const c = CHAINS.find((c) => c.id === a.originChain)
+  if (c?.platform === 'near' && /^0+$/.test(a.originAddress)) return 'NEAR (the native coin)'
+  if (c?.platform === 'evm' || c?.platform === 'solana') {
+    const address = originAddress(c, a)
+    return external(c.explorerTx.replace(/\/tx\/$/, '/token/') + address, `<code>${address}</code>`)
+  }
+  return `<code>${a.originAddress}</code>`
+}
 const wrappedAlgoAddress = (c: Chain, f: Facts) => (f.wrappedAlgo && c.platform === 'evm' ? checksum(f.wrappedAlgo) : f.wrappedAlgo)
 
 type Facts = {
@@ -246,7 +252,7 @@ export const FACTS: Record<number, Facts> = {
     },
     from: {
       intro:
-        'Send Wormhole-wrapped Avalanche tokens held on Algorand, mostly WAVAX, back to Avalanche C-Chain. Only ' +
+        'Send Wormhole-wrapped Avalanche tokens held on Algorand, such as WAVAX or USDC, back to Avalanche C-Chain. Only ' +
         'tokens that came from Avalanche can go there.',
       assets: [893309613, 1007352535],
       notes: ['WAVAX arrives on Avalanche as AVAX: the redeem unwraps it.'],
@@ -277,8 +283,8 @@ export const FACTS: Record<number, Facts> = {
     },
     from: {
       intro:
-        'Only Celo tokens can go from Algorand to Celo: CELO and EURm that were bridged to Algorand earlier. On ' +
-        `${CHECKED} none were held on Algorand, so there is nothing to send this way until someone bridges some over.`,
+        'Only Celo tokens can go from Algorand to Celo: CELO and EURm that were bridged to Algorand earlier. Few ' +
+        'are on Algorand, so check the asset links below for the amounts before you count on this route.',
       assets: [1618598027, 891408509],
       notes: [],
     },
@@ -497,13 +503,11 @@ ${others(c)}`
 
 function fromAlgorand(c: Chain): Doc {
   const f = FACTS[c.id]
-  const shown = f.from.assets.map(asset).filter(held)
-  const rest = fromChain(c.id).filter((a) => held(a) && !f.from.assets.includes(a.assetId)).length
-  const rows = shown.map((a) => [`${esc(a.unitName)}, ${asaLink(a.assetId)}`, esc(a.name), amount(a)])
-  const tokens = shown.length
-    ? `<p>These ${c.name} tokens were held on Algorand on ${CHECKED}${rest ? `, along with ${rest} less known ones` : ''}. The From Algorand page lists the ones your account holds.</p>
-${table(['Asset on Algorand', 'Name', 'On Algorand'], rows)}`
-    : `<p>On ${CHECKED} no ${c.name} tokens were held on Algorand. The wrapped assets exist (${f.from.assets.map(asaLink).join(', ')}), so tokens bridged from ${c.name} later can come back this way.</p>`
+  const shown = f.from.assets.map(asset)
+  const rest = fromChain(c.id).length - shown.length
+  const rows = shown.map((a) => [`${esc(a.unitName)}, ${asaLink(a.assetId)}`, esc(a.name), originalToken(a)])
+  const tokens = `<p>${rest ? `The best known of the ${shown.length + rest}` : shown.length === 1 ? 'The one' : shown.length === 2 ? 'Both' : `All ${shown.length}`} Wormhole-wrapped ${c.name} ${shown.length + rest === 1 ? 'asset' : 'assets'} on Algorand${rest ? ` are below; the <a href="/wrapped-assets/#${c.slug}">wrapped assets</a> page lists the rest` : ` ${shown.length === 1 ? 'is' : 'are'} below`}. Follow an asset's link for how much of it is on Algorand now. The From Algorand page lists the ones your account holds.</p>
+${table(['Asset on Algorand', 'Name', `Original token on ${c.name}`], rows)}`
   const html = `<p>${f.from.intro}</p>
 <p><a class="button primary" href="/from-algorand/">Send from Algorand</a></p>
 <h2>What can go from Algorand to ${c.name}</h2>
@@ -529,10 +533,9 @@ ${back(c)}`
     path: fromPath(c),
     title: `Algorand to ${c.name} Bridge (Wormhole) - Algorand WTT`,
     heading: `Algorand to ${c.name} bridge`,
-    description: shown.length
-      ? `Send Wormhole-wrapped ${shown.slice(0, 3).map((a) => a.unitName).join(', ')} from Algorand back to ${c.name} ` +
-        `with the Wormhole Token Bridge: what can go, how long it takes, and how to redeem on ${c.name}.`
-      : `What can go from Algorand to ${c.name} with the Wormhole Token Bridge, and how to redeem on ${c.name}.`,
+    description:
+      `Send Wormhole-wrapped ${shown.slice(0, 3).map((a) => a.unitName).join(', ')} from Algorand back to ${c.name} ` +
+      `with the Wormhole Token Bridge: what can go, how long it takes, and how to redeem on ${c.name}.`,
     html,
     crumbs: true,
   }

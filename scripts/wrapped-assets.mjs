@@ -1,12 +1,12 @@
-// Lists every Wormhole-wrapped asset on Algorand with its origin chain, origin token address and the amount in
-// circulation, as JSON on stdout. The route pages' token tables come from this list.
+// Lists every Wormhole-wrapped asset on Algorand with its origin chain and origin token address, as JSON on stdout.
+// The guide pages' token tables come from this list. Amounts are left out: they change all the time, and the pages
+// link to explorers for them.
 //
 //   node scripts/wrapped-assets.mjs > src/content/wrapped-assets.json
 //
 // The token bridge creates each wrapped ASA from a storage account that is opted in to the bridge app and rekeyed to
 // it. The indexer lists those accounts; the ones that created an asset are the wrapped assets. Each storage account's
-// local state holds the origin, as in src/lib/algorand.ts. In circulation is the total less what the reserve (the
-// creator) still holds.
+// local state holds the origin, as in src/lib/algorand.ts.
 const IDX = 'https://mainnet-idx.algonode.cloud'
 const ALGOD = 'https://mainnet-api.algonode.cloud'
 const APP = 842126029
@@ -46,8 +46,6 @@ for (const creator of creators) {
   const assetId = Number(blob.readBigUInt64BE(0))
   const asset = created.assets.find((a) => a.index === assetId)
   if (!asset || asset.params.manager !== BRIDGE || asset.params.reserve !== creator) continue
-  const held = await get(`${ALGOD}/v2/accounts/${creator}/assets/${assetId}`).catch(() => undefined)
-  const reserve = BigInt(held?.['asset-holding']?.amount ?? 0)
   assets.push({
     assetId,
     unitName: asset.params['unit-name'] ?? '',
@@ -55,7 +53,6 @@ for (const creator of creators) {
     decimals: asset.params.decimals,
     originChain: blob.readUInt16BE(92),
     originAddress: blob.subarray(60, 92).toString('hex'),
-    circulating: (BigInt(asset.params.total) - reserve).toString(),
   })
 }
 assets.sort((a, b) => a.originChain - b.originChain || a.assetId - b.assetId)

@@ -7,8 +7,7 @@
       "name": "Wrapped SOL",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "069b8857feab8184fb687f634618c035dac439dc1aeb3b5598a0f00000000001",
-      "circulating": "14707015680"
+      "originAddress": "069b8857feab8184fb687f634618c035dac439dc1aeb3b5598a0f00000000001"
     },
     {
       "assetId": 898230074,
@@ -16,8 +15,7 @@
       "name": "USD Coin",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "c6fa7af3bedbad3a3d65f36aabc97431b1bbe4c2d2f6e0e47ca60203452f5d61",
-      "circulating": "28545024"
+      "originAddress": "c6fa7af3bedbad3a3d65f36aabc97431b1bbe4c2d2f6e0e47ca60203452f5d61"
     },
     {
       "assetId": 925661512,
@@ -25,8 +23,7 @@
       "name": "USDT",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "ce010e60afedb22717bd63192f54145a3f965a33bb82d2c7029eb2ce1e208264",
-      "circulating": "0"
+      "originAddress": "ce010e60afedb22717bd63192f54145a3f965a33bb82d2c7029eb2ce1e208264"
     },
     {
       "assetId": 1002794461,
@@ -34,8 +31,7 @@
       "name": "Bonk",
       "decimals": 5,
       "originChain": 1,
-      "originAddress": "bc07c56e60ad3d3f177382eac6548fba1fd32cfd90ca02b3e7cfa185fdce7398",
-      "circulating": "100100096"
+      "originAddress": "bc07c56e60ad3d3f177382eac6548fba1fd32cfd90ca02b3e7cfa185fdce7398"
     },
     {
       "assetId": 1285086927,
@@ -43,8 +39,7 @@
       "name": "Popo, Pepe's Dog",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "78404f497a9523d5d2530469f1d76f4ac5cfafad2423341f61aa08021efc459c",
-      "circulating": "937839788032"
+      "originAddress": "78404f497a9523d5d2530469f1d76f4ac5cfafad2423341f61aa08021efc459c"
     },
     {
       "assetId": 1306314211,
@@ -52,8 +47,7 @@
       "name": "BOB",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "f2762b1e09ca62cbf5c4dd11c3ab93507aa6bac74c4afd0c4aa8d467de89011e",
-      "circulating": "8998912"
+      "originAddress": "f2762b1e09ca62cbf5c4dd11c3ab93507aa6bac74c4afd0c4aa8d467de89011e"
     },
     {
       "assetId": 1377252601,
@@ -61,8 +55,7 @@
       "name": "Borg Coin",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "7db8b2c514a18f11eff1a84758c78ea5c70a897732b3d1725507040ccb58ef27",
-      "circulating": "95718051678208"
+      "originAddress": "7db8b2c514a18f11eff1a84758c78ea5c70a897732b3d1725507040ccb58ef27"
     },
     {
       "assetId": 1396017155,
@@ -70,8 +63,7 @@
       "name": "BOZO",
       "decimals": 5,
       "originChain": 1,
-      "originAddress": "a082ac72dd45607ad6a5a227f0c7005730025ee3891ab039c563e1894ab0e64d",
-      "circulating": "0"
+      "originAddress": "a082ac72dd45607ad6a5a227f0c7005730025ee3891ab039c563e1894ab0e64d"
     },
     {
       "assetId": 1432936493,
@@ -79,8 +71,7 @@
       "name": "Wen",
       "decimals": 5,
       "originChain": 1,
-      "originAddress": "077cf63a56ff0afb124f6f68875a02adce4e320bbfcc1072e67a0a4ffa46c295",
-      "circulating": "0"
+      "originAddress": "077cf63a56ff0afb124f6f68875a02adce4e320bbfcc1072e67a0a4ffa46c295"
     },
     {
       "assetId": 1432947940,
@@ -88,8 +79,7 @@
       "name": "mockJUP",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "049a250bfacf558c6b6407a8d3716ff17c8c062a29b26a868e7ba5e7422ffd15",
-      "circulating": "0"
+      "originAddress": "049a250bfacf558c6b6407a8d3716ff17c8c062a29b26a868e7ba5e7422ffd15"
     },
     {
       "assetId": 1436526315,
@@ -97,8 +87,7 @@
       "name": "bozo",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "c59cade70266477a5028970d5d9680bb9f1602dd393d05e3cfa8775ea818e6f8",
-      "circulating": "2768896"
+      "originAddress": "c59cade70266477a5028970d5d9680bb9f1602dd393d05e3cfa8775ea818e6f8"
     },
     {
       "assetId": 1481493832,
@@ -106,8 +95,7 @@
       "name": "GLIZZY PEPE",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "0d2d52ff22aa67c027f2bf58daae1054f4834e486b2bf729da3d1ab52291e0c8",
-      "circulating": "11608548583424"
+      "originAddress": "0d2d52ff22aa67c027f2bf58daae1054f4834e486b2bf729da3d1ab52291e0c8"
     },
     {
       "assetId": 1595607242,
@@ -115,8 +103,7 @@
       "name": "BSKT",
       "decimals": 5,
       "originChain": 1,
-      "originAddress": "547b309eace670a9af4c6da12402ddbbc60d43c10e2c177b9533bdbc1888576f",
-      "circulating": "1000000000000"
+      "originAddress": "547b309eace670a9af4c6da12402ddbbc60d43c10e2c177b9533bdbc1888576f"
     },
     {
       "assetId": 1672251488,
@@ -124,8 +111,7 @@
       "name": "Wrapped ALGO",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "0e217f1d89397a8a2cdfcf5e46b64ac4e04206a3f396cd87b23734049eff9cae",
-      "circulating": "25673728"
+      "originAddress": "0e217f1d89397a8a2cdfcf5e46b64ac4e04206a3f396cd87b23734049eff9cae"
     },
     {
       "assetId": 1673830310,
@@ -133,8 +119,7 @@
       "name": "Mrs Bonk Inu",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "e8d55faffd547264f7961b01ac3475785b43ffd64cbe625bd888016460e531b8",
-      "circulating": "2000000000000000"
+      "originAddress": "e8d55faffd547264f7961b01ac3475785b43ffd64cbe625bd888016460e531b8"
     },
     {
       "assetId": 1684682524,
@@ -142,8 +127,7 @@
       "name": "Pyth Network",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "f5edec8471c75624ebc4079a634326d96a689e6157d79abe8f5a6f94472853bc",
-      "circulating": "99999744"
+      "originAddress": "f5edec8471c75624ebc4079a634326d96a689e6157d79abe8f5a6f94472853bc"
     },
     {
       "assetId": 1703994770,
@@ -151,8 +135,7 @@
       "name": "Wormhole Token",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "6927fdc01ea906f96d7137874cdd7adad00ca35764619310e54196c781d84d5b",
-      "circulating": "28569600"
+      "originAddress": "6927fdc01ea906f96d7137874cdd7adad00ca35764619310e54196c781d84d5b"
     },
     {
       "assetId": 1819393982,
@@ -160,8 +143,7 @@
       "name": "EGG",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "3b1f93f67db7d561ba257575f5935a4b2b8a7f0365015043ba2ebab4d94abeb8",
-      "circulating": "6899998720"
+      "originAddress": "3b1f93f67db7d561ba257575f5935a4b2b8a7f0365015043ba2ebab4d94abeb8"
     },
     {
       "assetId": 1873229596,
@@ -169,8 +151,7 @@
       "name": "PoliteCat",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "9628d35646c53226ff4ee783e96a99390a2cd4a42efdec1bb167568ceae2e1bf",
-      "circulating": "0"
+      "originAddress": "9628d35646c53226ff4ee783e96a99390a2cd4a42efdec1bb167568ceae2e1bf"
     },
     {
       "assetId": 1904512689,
@@ -178,8 +159,7 @@
       "name": "GimStup",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "ceb8d1d9dd41f1e8237299604ea943122d22d445ec05d8b48faa6a80f14bc6c2",
-      "circulating": "0"
+      "originAddress": "ceb8d1d9dd41f1e8237299604ea943122d22d445ec05d8b48faa6a80f14bc6c2"
     },
     {
       "assetId": 2328135720,
@@ -187,8 +167,7 @@
       "name": "Sappy Fren #2148",
       "decimals": 0,
       "originChain": 1,
-      "originAddress": "b8404d478c94775fead1cdbd10870b6112090ee196a9b821caaa6d7c03ac87c4",
-      "circulating": "0"
+      "originAddress": "b8404d478c94775fead1cdbd10870b6112090ee196a9b821caaa6d7c03ac87c4"
     },
     {
       "assetId": 2356104450,
@@ -196,8 +175,7 @@
       "name": "FATGF",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "3af4e2d8b5cb7182c097ad3b67e18e9ff9f28ad4a1ca8161809e1ff94e0e2216",
-      "circulating": "999424"
+      "originAddress": "3af4e2d8b5cb7182c097ad3b67e18e9ff9f28ad4a1ca8161809e1ff94e0e2216"
     },
     {
       "assetId": 2518941131,
@@ -205,8 +183,7 @@
       "name": "deathOS",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "48ac3d57fd7c73b9bb03bde32808cc9b90ccedd48d285866a4414ead8f581164",
-      "circulating": "282318631698432"
+      "originAddress": "48ac3d57fd7c73b9bb03bde32808cc9b90ccedd48d285866a4414ead8f581164"
     },
     {
       "assetId": 3323663366,
@@ -214,8 +191,7 @@
       "name": "Grass",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "eb93117f10dd2e3ff96c12c11267f8654eb1050d05a55eaa08ab80a77c409d1e",
-      "circulating": "0"
+      "originAddress": "eb93117f10dd2e3ff96c12c11267f8654eb1050d05a55eaa08ab80a77c409d1e"
     },
     {
       "assetId": 3391032210,
@@ -223,8 +199,7 @@
       "name": "Presale fVPN",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "8b6fe1a6089203a91eb42ded5240b73ba4be88b13052e236a6640262aa54967c",
-      "circulating": "22086168576"
+      "originAddress": "8b6fe1a6089203a91eb42ded5240b73ba4be88b13052e236a6640262aa54967c"
     },
     {
       "assetId": 3437921046,
@@ -232,8 +207,7 @@
       "name": "Presale Fry VPN #2",
       "decimals": 6,
       "originChain": 1,
-      "originAddress": "041bec922ec3aa9b28db515e7f60e157f5f335196f23bd101c913b41a8536a86",
-      "circulating": "2192982016"
+      "originAddress": "041bec922ec3aa9b28db515e7f60e157f5f335196f23bd101c913b41a8536a86"
     },
     {
       "assetId": 3437924576,
@@ -241,8 +215,7 @@
       "name": "BLACKGOLD",
       "decimals": 8,
       "originChain": 1,
-      "originAddress": "2e76c7f176fd62f2993c6b04e5a58ec4da105d654fe707d2cc0993fe5a2c7af3",
-      "circulating": "215005999104"
+      "originAddress": "2e76c7f176fd62f2993c6b04e5a58ec4da105d654fe707d2cc0993fe5a2c7af3"
     },
     {
       "assetId": 887406851,
@@ -250,8 +223,7 @@
       "name": "Wrapped Ether",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-      "circulating": "1523918848"
+      "originAddress": "000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     },
     {
       "assetId": 887407002,
@@ -259,8 +231,7 @@
       "name": "USD Coin",
       "decimals": 6,
       "originChain": 2,
-      "originAddress": "000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-      "circulating": "1323409408"
+      "originAddress": "000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     },
     {
       "assetId": 887822003,
@@ -268,8 +239,7 @@
       "name": "Quant",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "0000000000000000000000004a220e6096b25eadb88358cb44068a3248254675",
-      "circulating": "4999168"
+      "originAddress": "0000000000000000000000004a220e6096b25eadb88358cb44068a3248254675"
     },
     {
       "assetId": 889292383,
@@ -277,8 +247,7 @@
       "name": "VoteFork.com",
       "decimals": 0,
       "originChain": 2,
-      "originAddress": "000000000000000000000000062032f5a8ffafbde4d513237071f450c270b764",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000062032f5a8ffafbde4d513237071f450c270b764"
     },
     {
       "assetId": 893504888,
@@ -286,8 +255,7 @@
       "name": "Tether USD",
       "decimals": 6,
       "originChain": 2,
-      "originAddress": "000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7",
-      "circulating": "572434432"
+      "originAddress": "000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7"
     },
     {
       "assetId": 915290846,
@@ -295,8 +263,7 @@
       "name": "Basic Attention Token",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "0000000000000000000000000d8775f648430679a709e98d2b0cb6250d2887ef",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000000d8775f648430679a709e98d2b0cb6250d2887ef"
     },
     {
       "assetId": 921077476,
@@ -304,8 +271,7 @@
       "name": "Curve DAO Token",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000d533a949740bb3306d119cc777fa900ba034cd52",
-      "circulating": "421961728"
+      "originAddress": "000000000000000000000000d533a949740bb3306d119cc777fa900ba034cd52"
     },
     {
       "assetId": 946647678,
@@ -313,8 +279,7 @@
       "name": "Yieldly",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "00000000000000000000000088cb253d4c8cab8cdf7948a9251db85a13669e23",
-      "circulating": "955587452928"
+      "originAddress": "00000000000000000000000088cb253d4c8cab8cdf7948a9251db85a13669e23"
     },
     {
       "assetId": 956153949,
@@ -322,8 +287,7 @@
       "name": "SHIBA INU",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "00000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
-      "circulating": "58483437162496"
+      "originAddress": "00000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
     },
     {
       "assetId": 961225635,
@@ -331,8 +295,7 @@
       "name": "ApeCoin",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "0000000000000000000000004d224452801aced8b2f0aebe155379bb5d594381",
-      "circulating": "12288"
+      "originAddress": "0000000000000000000000004d224452801aced8b2f0aebe155379bb5d594381"
     },
     {
       "assetId": 1029336586,
@@ -340,8 +303,7 @@
       "name": "OpulousToken",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "00000000000000000000000080d55c03180349fff4a229102f62328220a96444",
-      "circulating": "7368749056"
+      "originAddress": "00000000000000000000000080d55c03180349fff4a229102f62328220a96444"
     },
     {
       "assetId": 1058926737,
@@ -349,8 +311,7 @@
       "name": "Wrapped BTC",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "0000000000000000000000002260fac5e5542a773aa44fbcfedf7c193bc2c599",
-      "circulating": "79964160"
+      "originAddress": "0000000000000000000000002260fac5e5542a773aa44fbcfedf7c193bc2c599"
     },
     {
       "assetId": 1071084947,
@@ -358,8 +319,7 @@
       "name": "Dai Stablecoin",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "0000000000000000000000006b175474e89094c44da98b954eedeac495271d0f",
-      "circulating": "267315200"
+      "originAddress": "0000000000000000000000006b175474e89094c44da98b954eedeac495271d0f"
     },
     {
       "assetId": 1071093498,
@@ -367,8 +327,7 @@
       "name": "renBTC",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000eb4c2781e4eba804ce9a9803c67d0893436bb27d",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000eb4c2781e4eba804ce9a9803c67d0893436bb27d"
     },
     {
       "assetId": 1091928613,
@@ -376,8 +335,7 @@
       "name": "Pepe",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "0000000000000000000000006982508145454ce325ddbe47a25d4ec3d2311933",
-      "circulating": "33334666257000448"
+      "originAddress": "0000000000000000000000006982508145454ce325ddbe47a25d4ec3d2311933"
     },
     {
       "assetId": 1136854809,
@@ -385,8 +343,7 @@
       "name": "Pepe 2.0",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000fb66321d7c674995dfcc2cb67a30bc978dc862ad",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000fb66321d7c674995dfcc2cb67a30bc978dc862ad"
     },
     {
       "assetId": 1155133278,
@@ -394,8 +351,7 @@
       "name": "Rollbit Coin",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000046eee2cc3188071c02bfc1745a6b17c656e3f3d",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000046eee2cc3188071c02bfc1745a6b17c656e3f3d"
     },
     {
       "assetId": 1163259470,
@@ -403,8 +359,7 @@
       "name": "Maple Token",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "00000000000000000000000033349b282065b0284d756f0577fb39c158f935e6",
-      "circulating": "2017824768"
+      "originAddress": "00000000000000000000000033349b282065b0284d756f0577fb39c158f935e6"
     },
     {
       "assetId": 1200094857,
@@ -412,8 +367,7 @@
       "name": "ChainLink Token",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000514910771af9ca656af840dff83e8264ecf986ca",
-      "circulating": "338583140352"
+      "originAddress": "000000000000000000000000514910771af9ca656af840dff83e8264ecf986ca"
     },
     {
       "assetId": 1235552036,
@@ -421,8 +375,7 @@
       "name": "PIXL",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000427a03fb96d9a94a6727fbcfbba143444090dd64",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000427a03fb96d9a94a6727fbcfbba143444090dd64"
     },
     {
       "assetId": 1889681715,
@@ -430,8 +383,7 @@
       "name": "FLOKI",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000cf0c122c6b73ff809c693db761e7baebe62b6a2e",
-      "circulating": "14145618097465344"
+      "originAddress": "000000000000000000000000cf0c122c6b73ff809c693db761e7baebe62b6a2e"
     },
     {
       "assetId": 2172270610,
@@ -439,8 +391,7 @@
       "name": "STASIS EURS Token",
       "decimals": 2,
       "originChain": 2,
-      "originAddress": "000000000000000000000000db25f211ab05b1c97d595516f45794528a807ad8",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000db25f211ab05b1c97d595516f45794528a807ad8"
     },
     {
       "assetId": 2384310769,
@@ -448,8 +399,7 @@
       "name": "THC Network",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000a59dacabfeaedaf76761f7a6bcf40a526f333797",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000a59dacabfeaedaf76761f7a6bcf40a526f333797"
     },
     {
       "assetId": 3552824641,
@@ -457,8 +407,7 @@
       "name": "Paxos Gold",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "00000000000000000000000045804880de22913dafe09f4980848ece6ecbaf78",
-      "circulating": "0"
+      "originAddress": "00000000000000000000000045804880de22913dafe09f4980848ece6ecbaf78"
     },
     {
       "assetId": 3573030012,
@@ -466,8 +415,7 @@
       "name": "Day By Day Token",
       "decimals": 8,
       "originChain": 2,
-      "originAddress": "000000000000000000000000a5f1dbb0e55bc31f32c6d032bee330288490e722",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000a5f1dbb0e55bc31f32c6d032bee330288490e722"
     },
     {
       "assetId": 1033539206,
@@ -475,8 +423,7 @@
       "name": "LUNA",
       "decimals": 6,
       "originChain": 3,
-      "originAddress": "010000000000000000000000000000000000000000000000000000756c756e61",
-      "circulating": "0"
+      "originAddress": "010000000000000000000000000000000000000000000000000000756c756e61"
     },
     {
       "assetId": 891648844,
@@ -484,8 +431,7 @@
       "name": "Wrapped BNB",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "000000000000000000000000bb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
-      "circulating": "82262016"
+      "originAddress": "000000000000000000000000bb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
     },
     {
       "assetId": 921966766,
@@ -493,8 +439,7 @@
       "name": "USD Coin",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d",
-      "circulating": "772468736"
+      "originAddress": "0000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d"
     },
     {
       "assetId": 950708858,
@@ -502,8 +447,7 @@
       "name": "OpulousToken [via ChainPort.io]",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "000000000000000000000000686318000d982bc8dcc1cdcf8ffd22322f0960ed",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000686318000d982bc8dcc1cdcf8ffd22322f0960ed"
     },
     {
       "assetId": 977475199,
@@ -511,8 +455,7 @@
       "name": "Tether USD",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "00000000000000000000000055d398326f99059ff775485246999027b3197955",
-      "circulating": "1914607616"
+      "originAddress": "00000000000000000000000055d398326f99059ff775485246999027b3197955"
     },
     {
       "assetId": 981907882,
@@ -520,8 +463,7 @@
       "name": "BUSD Token",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "000000000000000000000000e9e7cea3dedca5984780bafc599bd69add087d56",
-      "circulating": "1999998976"
+      "originAddress": "000000000000000000000000e9e7cea3dedca5984780bafc599bd69add087d56"
     },
     {
       "assetId": 1106133914,
@@ -529,8 +471,7 @@
       "name": "GEMZSTONE",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000004ae0fb63c986a9a5d0d98c987848be43690468a5",
-      "circulating": "1999998976"
+      "originAddress": "0000000000000000000000004ae0fb63c986a9a5d0d98c987848be43690468a5"
     },
     {
       "assetId": 1124613757,
@@ -538,8 +479,7 @@
       "name": "XRP Token",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000001d2f0da169ceb9fc7b3144628db156f3f6c60dbe",
-      "circulating": "100087808"
+      "originAddress": "0000000000000000000000001d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
     },
     {
       "assetId": 1190325879,
@@ -547,8 +487,7 @@
       "name": "Coop Coin",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "000000000000000000000000bc65d0d2bc8113a180982af104f2301f61689f3f",
-      "circulating": "100000000000000"
+      "originAddress": "000000000000000000000000bc65d0d2bc8113a180982af104f2301f61689f3f"
     },
     {
       "assetId": 1190411140,
@@ -556,8 +495,7 @@
       "name": "AlgoGems",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000006bdf3d6c844cf05a998c976686c463e7bf616a8b",
-      "circulating": "2752346499999744"
+      "originAddress": "0000000000000000000000006bdf3d6c844cf05a998c976686c463e7bf616a8b"
     },
     {
       "assetId": 1221322369,
@@ -565,8 +503,7 @@
       "name": "Arbitrum",
       "decimals": 6,
       "originChain": 4,
-      "originAddress": "000000000000000000000000990e87719da2e5bb158a7e25d0c96618db888888",
-      "circulating": "830390272"
+      "originAddress": "000000000000000000000000990e87719da2e5bb158a7e25d0c96618db888888"
     },
     {
       "assetId": 1229063012,
@@ -574,8 +511,7 @@
       "name": "Goracle",
       "decimals": 3,
       "originChain": 4,
-      "originAddress": "000000000000000000000000aa1396da792fda48e7cb7dabc87160af8e1af806",
-      "circulating": "593920"
+      "originAddress": "000000000000000000000000aa1396da792fda48e7cb7dabc87160af8e1af806"
     },
     {
       "assetId": 1230027662,
@@ -583,8 +519,7 @@
       "name": "pTokens BTC",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "000000000000000000000000ed28a457a5a76596ac48d87c0f577020f6ea1c4c",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000ed28a457a5a76596ac48d87c0f577020f6ea1c4c"
     },
     {
       "assetId": 1386895669,
@@ -592,8 +527,7 @@
       "name": "Avalanche",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000001ce0c2827e2ef14d5c4f29a091d735a204794041",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000001ce0c2827e2ef14d5c4f29a091d735a204794041"
     },
     {
       "assetId": 1403001477,
@@ -601,8 +535,7 @@
       "name": "Dogecoin",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "000000000000000000000000ba2ae424d960c26247dd6c32edc70b295c744c43",
-      "circulating": "2272948224"
+      "originAddress": "000000000000000000000000ba2ae424d960c26247dd6c32edc70b295c744c43"
     },
     {
       "assetId": 1429142339,
@@ -610,8 +543,7 @@
       "name": "ChainLink Token",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "000000000000000000000000f8a0bf9cf54bb92f17374d9e9a321e6a111a51bd",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000f8a0bf9cf54bb92f17374d9e9a321e6a111a51bd"
     },
     {
       "assetId": 1436799077,
@@ -619,8 +551,7 @@
       "name": "SHIBA INU",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000002859e4544c4bb03966803b044a93563bd2d0dd4d",
-      "circulating": "2007959053481984"
+      "originAddress": "0000000000000000000000002859e4544c4bb03966803b044a93563bd2d0dd4d"
     },
     {
       "assetId": 1481138794,
@@ -628,8 +559,7 @@
       "name": "Bitcoin Cash Token",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000008ff795a6f4d97e7887c79bea79aba5cc76444adf",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000008ff795a6f4d97e7887c79bea79aba5cc76444adf"
     },
     {
       "assetId": 1481162602,
@@ -637,8 +567,7 @@
       "name": "Cardano Token",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000003ee2200efb3400fabb9aacf31297cbdd1d435d47",
-      "circulating": "94208"
+      "originAddress": "0000000000000000000000003ee2200efb3400fabb9aacf31297cbdd1d435d47"
     },
     {
       "assetId": 1481177019,
@@ -646,8 +575,7 @@
       "name": "Cosmos Token",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000000eb3a705fc54725037cc9e008bdede697f62f335",
-      "circulating": "2048"
+      "originAddress": "0000000000000000000000000eb3a705fc54725037cc9e008bdede697f62f335"
     },
     {
       "assetId": 1638573600,
@@ -655,8 +583,7 @@
       "name": "Ethereum Token",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "0000000000000000000000002170ed0880ac9a755fd29b2688956bd959f933f8",
-      "circulating": "28672"
+      "originAddress": "0000000000000000000000002170ed0880ac9a755fd29b2688956bd959f933f8"
     },
     {
       "assetId": 1653168811,
@@ -664,8 +591,7 @@
       "name": "FLOKI",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "000000000000000000000000fb5b838b6cfeedc2873ab27866079ac55363d37e",
-      "circulating": "30000538853376"
+      "originAddress": "000000000000000000000000fb5b838b6cfeedc2873ab27866079ac55363d37e"
     },
     {
       "assetId": 1779149103,
@@ -673,8 +599,7 @@
       "name": "Shitcoin",
       "decimals": 8,
       "originChain": 4,
-      "originAddress": "000000000000000000000000567351e802f52ca60b2ac9d61d5b538e9582e78d",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000567351e802f52ca60b2ac9d61d5b538e9582e78d"
     },
     {
       "assetId": 889250371,
@@ -682,8 +607,7 @@
       "name": "XXPP.org",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "0000000000000000000000005229cadb824fd5117f00e3614c138b62f2bd3156",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000005229cadb824fd5117f00e3614c138b62f2bd3156"
     },
     {
       "assetId": 891396362,
@@ -691,8 +615,7 @@
       "name": "Wrapped Matic",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "0000000000000000000000000d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
-      "circulating": "10157232128"
+      "originAddress": "0000000000000000000000000d500b1d8e8ef31e21c99d1db9a6444d3adf1270"
     },
     {
       "assetId": 898611351,
@@ -700,8 +623,7 @@
       "name": "USD Coin (PoS)",
       "decimals": 6,
       "originChain": 5,
-      "originAddress": "0000000000000000000000002791bca1f2de4661ed88a30c99a7a9449aa84174",
-      "circulating": "6303744"
+      "originAddress": "0000000000000000000000002791bca1f2de4661ed88a30c99a7a9449aa84174"
     },
     {
       "assetId": 955113265,
@@ -709,8 +631,7 @@
       "name": "CRIPTORO COIN (PoS)",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "0000000000000000000000007dc06244536fc5a86123034ee6d9204e436a3e91",
-      "circulating": "600000512"
+      "originAddress": "0000000000000000000000007dc06244536fc5a86123034ee6d9204e436a3e91"
     },
     {
       "assetId": 965049717,
@@ -718,8 +639,7 @@
       "name": "(PoS) Tether USD",
       "decimals": 6,
       "originChain": 5,
-      "originAddress": "000000000000000000000000c2132d05d31c914a87c6611c10748aeb04b58e8f",
-      "circulating": "495616"
+      "originAddress": "000000000000000000000000c2132d05d31c914a87c6611c10748aeb04b58e8f"
     },
     {
       "assetId": 994098249,
@@ -727,8 +647,7 @@
       "name": "Grateful Gangsters ",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "00000000000000000000000037d44ecd6256c2aa544fd44aabd086019d4821dd",
-      "circulating": "0"
+      "originAddress": "00000000000000000000000037d44ecd6256c2aa544fd44aabd086019d4821dd"
     },
     {
       "assetId": 1068056152,
@@ -736,8 +655,7 @@
       "name": "IBFN",
       "decimals": 6,
       "originChain": 5,
-      "originAddress": "000000000000000000000000c2e9312573deca65346716dc0b54e13620500c43",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000c2e9312573deca65346716dc0b54e13620500c43"
     },
     {
       "assetId": 1077452244,
@@ -745,8 +663,7 @@
       "name": "(PoS) Wrapped BTC",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "0000000000000000000000001bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000001bfd67037b42cf73acf2047067bd4f2c47d9bfd6"
     },
     {
       "assetId": 1145979212,
@@ -754,8 +671,7 @@
       "name": "Defactor (PoS)",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "000000000000000000000000e0bceef36f3a6efdd5eebfacd591423f8549b9d5",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000e0bceef36f3a6efdd5eebfacd591423f8549b9d5"
     },
     {
       "assetId": 1236031277,
@@ -763,8 +679,7 @@
       "name": "USD Coin",
       "decimals": 6,
       "originChain": 5,
-      "originAddress": "0000000000000000000000003c499c542cef5e3811e1192ce70d8cc03d5c3359",
-      "circulating": "105347072"
+      "originAddress": "0000000000000000000000003c499c542cef5e3811e1192ce70d8cc03d5c3359"
     },
     {
       "assetId": 1556698427,
@@ -772,8 +687,7 @@
       "name": "Dimo",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "000000000000000000000000e261d618a959afffd53168cd07d12e37b26761db",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000e261d618a959afffd53168cd07d12e37b26761db"
     },
     {
       "assetId": 1620707239,
@@ -781,8 +695,7 @@
       "name": "ICHI",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "000000000000000000000000111111517e4929d3dcbdfa7cce55d30d4b6bc4d6",
-      "circulating": "2478080"
+      "originAddress": "000000000000000000000000111111517e4929d3dcbdfa7cce55d30d4b6bc4d6"
     },
     {
       "assetId": 1729988203,
@@ -790,8 +703,7 @@
       "name": "Backstage Pass Notes",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "0000000000000000000000002d66953fc2eb650f0fd992dbe1e71d743a4e9fee",
-      "circulating": "9999998976"
+      "originAddress": "0000000000000000000000002d66953fc2eb650f0fd992dbe1e71d743a4e9fee"
     },
     {
       "assetId": 2386799637,
@@ -799,8 +711,7 @@
       "name": "STASIS EURS Token (PoS)",
       "decimals": 2,
       "originChain": 5,
-      "originAddress": "000000000000000000000000e111178a87a3bff0c8d18decba5798827539ae99",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000e111178a87a3bff0c8d18decba5798827539ae99"
     },
     {
       "assetId": 3066814327,
@@ -808,8 +719,7 @@
       "name": "Denario Silver Coin",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "0000000000000000000000005d4e735784293a0a8d37761ad93c13a0dd35c7e7",
-      "circulating": "49999872"
+      "originAddress": "0000000000000000000000005d4e735784293a0a8d37761ad93c13a0dd35c7e7"
     },
     {
       "assetId": 3420394656,
@@ -817,8 +727,7 @@
       "name": "X-Cash (PoS)",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "00000000000000000000000003678f2c2c762dc63c2bb738c3a837d366eda560",
-      "circulating": "0"
+      "originAddress": "00000000000000000000000003678f2c2c762dc63c2bb738c3a837d366eda560"
     },
     {
       "assetId": 3502687410,
@@ -826,8 +735,7 @@
       "name": "Day By Day Token (PoS)",
       "decimals": 8,
       "originChain": 5,
-      "originAddress": "00000000000000000000000072b9f88e822cf08b031c2206612b025a82fb303c",
-      "circulating": "0"
+      "originAddress": "00000000000000000000000072b9f88e822cf08b031c2206612b025a82fb303c"
     },
     {
       "assetId": 890260652,
@@ -835,8 +743,7 @@
       "name": "Tether USD",
       "decimals": 6,
       "originChain": 6,
-      "originAddress": "000000000000000000000000c7198437980c041c805a1edcba50c1ce5db95118",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000c7198437980c041c805a1edcba50c1ce5db95118"
     },
     {
       "assetId": 893309613,
@@ -844,8 +751,7 @@
       "name": "Wrapped AVAX",
       "decimals": 8,
       "originChain": 6,
-      "originAddress": "000000000000000000000000b31f66aa3c1e785363f0875a1b74e27b85fd66c7",
-      "circulating": "61777879040"
+      "originAddress": "000000000000000000000000b31f66aa3c1e785363f0875a1b74e27b85fd66c7"
     },
     {
       "assetId": 1007352535,
@@ -853,8 +759,7 @@
       "name": "USD Coin",
       "decimals": 6,
       "originChain": 6,
-      "originAddress": "000000000000000000000000b97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
-      "circulating": "7000064"
+      "originAddress": "000000000000000000000000b97ef9ef8734c71904d8002f8b6bc66dd9c48a6e"
     },
     {
       "assetId": 1219436187,
@@ -862,8 +767,7 @@
       "name": "SOLStream",
       "decimals": 0,
       "originChain": 6,
-      "originAddress": "0000000000000000000000004aea387b1911c2e5d1bc2317372fa02e34ced269",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000004aea387b1911c2e5d1bc2317372fa02e34ced269"
     },
     {
       "assetId": 1221312852,
@@ -871,8 +775,7 @@
       "name": "UNI",
       "decimals": 8,
       "originChain": 6,
-      "originAddress": "0000000000000000000000003350289891543865f8bb41ee747f31ce5d5e3739",
-      "circulating": "99999744"
+      "originAddress": "0000000000000000000000003350289891543865f8bb41ee747f31ce5d5e3739"
     },
     {
       "assetId": 1247105721,
@@ -880,8 +783,7 @@
       "name": "Bware",
       "decimals": 8,
       "originChain": 6,
-      "originAddress": "000000000000000000000000a4fb4f0ff2431262d236778495145ecbc975c38b",
-      "circulating": "7999488"
+      "originAddress": "000000000000000000000000a4fb4f0ff2431262d236778495145ecbc975c38b"
     },
     {
       "assetId": 1247116781,
@@ -889,8 +791,7 @@
       "name": "Hatchy",
       "decimals": 8,
       "originChain": 6,
-      "originAddress": "000000000000000000000000502580fc390606b47fc3b741d6d49909383c28a9",
-      "circulating": "497000448"
+      "originAddress": "000000000000000000000000502580fc390606b47fc3b741d6d49909383c28a9"
     },
     {
       "assetId": 1708748688,
@@ -898,8 +799,7 @@
       "name": "Kimbo",
       "decimals": 8,
       "originChain": 6,
-      "originAddress": "000000000000000000000000184ff13b3ebcb25be44e860163a5d8391dd568c1",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000184ff13b3ebcb25be44e860163a5d8391dd568c1"
     },
     {
       "assetId": 1825826608,
@@ -907,8 +807,7 @@
       "name": "Chainlink Token",
       "decimals": 8,
       "originChain": 6,
-      "originAddress": "0000000000000000000000005947bb275c521040051d82396192181b413227a3",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000005947bb275c521040051d82396192181b413227a3"
     },
     {
       "assetId": 2058544621,
@@ -916,8 +815,7 @@
       "name": "TetherToken",
       "decimals": 6,
       "originChain": 6,
-      "originAddress": "0000000000000000000000009702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000009702230a8ea53601f5cd2dc00fdbc13d4df4a8c7"
     },
     {
       "assetId": 2163853410,
@@ -925,8 +823,7 @@
       "name": "Joe LP Token",
       "decimals": 8,
       "originChain": 6,
-      "originAddress": "0000000000000000000000002915c75422e4303c896768a938e2820aff302f64",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000002915c75422e4303c896768a938e2820aff302f64"
     },
     {
       "assetId": 2838291354,
@@ -934,8 +831,7 @@
       "name": "OFFICIAL TRUMP",
       "decimals": 8,
       "originChain": 6,
-      "originAddress": "000000000000000000000000a80f36ba18c7f721f3f7acdbcdefd3a86869a036",
-      "circulating": "55296"
+      "originAddress": "000000000000000000000000a80f36ba18c7f721f3f7acdbcdefd3a86869a036"
     },
     {
       "assetId": 3277547003,
@@ -943,8 +839,7 @@
       "name": "Hypha Staked AVAX",
       "decimals": 8,
       "originChain": 6,
-      "originAddress": "000000000000000000000000a25eaf2906fa1a3a13edac9b9657108af7b703e3",
-      "circulating": "3379200"
+      "originAddress": "000000000000000000000000a25eaf2906fa1a3a13edac9b9657108af7b703e3"
     },
     {
       "assetId": 1033358941,
@@ -952,8 +847,7 @@
       "name": "Wrapped ROSE",
       "decimals": 8,
       "originChain": 7,
-      "originAddress": "00000000000000000000000021c718c22d52d0f3a789b752d4c2fd5908a8a733",
-      "circulating": "0"
+      "originAddress": "00000000000000000000000021c718c22d52d0f3a789b752d4c2fd5908a8a733"
     },
     {
       "assetId": 891053373,
@@ -961,8 +855,7 @@
       "name": "USD Coin",
       "decimals": 6,
       "originChain": 10,
-      "originAddress": "00000000000000000000000004068da6c83afcfa0e13ba15a6696662335d5b75",
-      "circulating": "10999808"
+      "originAddress": "00000000000000000000000004068da6c83afcfa0e13ba15a6696662335d5b75"
     },
     {
       "assetId": 893317821,
@@ -970,8 +863,7 @@
       "name": "Wrapped Fantom",
       "decimals": 8,
       "originChain": 10,
-      "originAddress": "00000000000000000000000021be370d5312f44cb42ce377bc9b8a0cef1a4c83",
-      "circulating": "508999680"
+      "originAddress": "00000000000000000000000021be370d5312f44cb42ce377bc9b8a0cef1a4c83"
     },
     {
       "assetId": 1221537963,
@@ -979,8 +871,7 @@
       "name": "Ethereum",
       "decimals": 8,
       "originChain": 10,
-      "originAddress": "00000000000000000000000074b23882a30290451a17c44f4f05243b6b58c76d",
-      "circulating": "0"
+      "originAddress": "00000000000000000000000074b23882a30290451a17c44f4f05243b6b58c76d"
     },
     {
       "assetId": 891408509,
@@ -988,8 +879,7 @@
       "name": "Celo Euro",
       "decimals": 8,
       "originChain": 14,
-      "originAddress": "000000000000000000000000d8763cba276a3738e6de85b4b3bf5fded6d6ca73",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000d8763cba276a3738e6de85b4b3bf5fded6d6ca73"
     },
     {
       "assetId": 1618598027,
@@ -997,8 +887,7 @@
       "name": "Celo native asset",
       "decimals": 8,
       "originChain": 14,
-      "originAddress": "000000000000000000000000471ece3750da237f93b8e339c536989b8978a438",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000471ece3750da237f93b8e339c536989b8978a438"
     },
     {
       "assetId": 901137853,
@@ -1006,8 +895,7 @@
       "name": "NEAR",
       "decimals": 8,
       "originChain": 15,
-      "originAddress": "0000000000000000000000000000000000000000000000000000000000000000",
-      "circulating": "1703999488"
+      "originAddress": "0000000000000000000000000000000000000000000000000000000000000000"
     },
     {
       "assetId": 1032667374,
@@ -1015,8 +903,7 @@
       "name": "Wrapped GLMR",
       "decimals": 8,
       "originChain": 16,
-      "originAddress": "000000000000000000000000acc15dc74880c9944775448304b263d191c6077f",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000acc15dc74880c9944775448304b263d191c6077f"
     },
     {
       "assetId": 1068940805,
@@ -1024,8 +911,7 @@
       "name": "LUNA",
       "decimals": 6,
       "originChain": 18,
-      "originAddress": "01fa6c6fbc36d8c245b0a852a43eb5d644e8b4c477b27bfab9537c10945939da",
-      "circulating": "0"
+      "originAddress": "01fa6c6fbc36d8c245b0a852a43eb5d644e8b4c477b27bfab9537c10945939da"
     },
     {
       "assetId": 1032658163,
@@ -1033,8 +919,7 @@
       "name": "Aptos Coin",
       "decimals": 8,
       "originChain": 22,
-      "originAddress": "a867703f5395cb2965feb7ebff5cdf39b771fc6156085da3ae4147a00be91b38",
-      "circulating": "10301440"
+      "originAddress": "a867703f5395cb2965feb7ebff5cdf39b771fc6156085da3ae4147a00be91b38"
     },
     {
       "assetId": 1227834244,
@@ -1042,8 +927,7 @@
       "name": "Aptos Coin",
       "decimals": 8,
       "originChain": 22,
-      "originAddress": "e6ab20819446c189b95d55f969aaf01931e3033a897bcb6ba1d440ce35f0ca56",
-      "circulating": "0"
+      "originAddress": "e6ab20819446c189b95d55f969aaf01931e3033a897bcb6ba1d440ce35f0ca56"
     },
     {
       "assetId": 1057583502,
@@ -1051,8 +935,7 @@
       "name": "USD Coin (Arb1)",
       "decimals": 6,
       "originChain": 23,
-      "originAddress": "000000000000000000000000ff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-      "circulating": "10999808"
+      "originAddress": "000000000000000000000000ff970a61a04b1ca14834a43f5de4533ebddb5cc8"
     },
     {
       "assetId": 1169529421,
@@ -1060,8 +943,7 @@
       "name": "Wrapped Ether",
       "decimals": 8,
       "originChain": 23,
-      "originAddress": "00000000000000000000000082af49447d8a07e3bd95bd0d56f35241523fbab1",
-      "circulating": "0"
+      "originAddress": "00000000000000000000000082af49447d8a07e3bd95bd0d56f35241523fbab1"
     },
     {
       "assetId": 1221549217,
@@ -1069,8 +951,7 @@
       "name": "Arbitrum",
       "decimals": 8,
       "originChain": 23,
-      "originAddress": "000000000000000000000000912ce59144191c1204e64559fe8253a0e49e6548",
-      "circulating": "89999360"
+      "originAddress": "000000000000000000000000912ce59144191c1204e64559fe8253a0e49e6548"
     },
     {
       "assetId": 1272612695,
@@ -1078,8 +959,7 @@
       "name": "USD Coin",
       "decimals": 6,
       "originChain": 23,
-      "originAddress": "000000000000000000000000af88d065e77c8cc2239327c5edb3a432268e5831",
-      "circulating": "18069504"
+      "originAddress": "000000000000000000000000af88d065e77c8cc2239327c5edb3a432268e5831"
     },
     {
       "assetId": 1527952597,
@@ -1087,8 +967,7 @@
       "name": "ChainLink Token",
       "decimals": 8,
       "originChain": 23,
-      "originAddress": "000000000000000000000000f97f4df75117a78c1a5a0dbb814af92458539fb4",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000f97f4df75117a78c1a5a0dbb814af92458539fb4"
     },
     {
       "assetId": 1564397265,
@@ -1096,8 +975,7 @@
       "name": "OpulousToken",
       "decimals": 8,
       "originChain": 23,
-      "originAddress": "0000000000000000000000000c5fa0e07949f941a6c2c29a008252db1527d6ee",
-      "circulating": "1336118265856"
+      "originAddress": "0000000000000000000000000c5fa0e07949f941a6c2c29a008252db1527d6ee"
     },
     {
       "assetId": 2308394287,
@@ -1105,8 +983,7 @@
       "name": "Wrapped BTC",
       "decimals": 8,
       "originChain": 23,
-      "originAddress": "0000000000000000000000002f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
-      "circulating": "0"
+      "originAddress": "0000000000000000000000002f2a2543b76a4166549f7aab2e75bef0aefc5b0f"
     },
     {
       "assetId": 1046873545,
@@ -1114,8 +991,7 @@
       "name": "USD Coin",
       "decimals": 6,
       "originChain": 24,
-      "originAddress": "0000000000000000000000007f5c764cbc14f9669b88837ca1490cca17c31607",
-      "circulating": "69632"
+      "originAddress": "0000000000000000000000007f5c764cbc14f9669b88837ca1490cca17c31607"
     },
     {
       "assetId": 1370611785,
@@ -1123,8 +999,7 @@
       "name": "USD Coin",
       "decimals": 6,
       "originChain": 24,
-      "originAddress": "0000000000000000000000000b2c639c533813f4aa9d7837caf62653d097ff85",
-      "circulating": "5099520"
+      "originAddress": "0000000000000000000000000b2c639c533813f4aa9d7837caf62653d097ff85"
     },
     {
       "assetId": 1265059965,
@@ -1132,8 +1007,7 @@
       "name": "Wrapped Ether",
       "decimals": 8,
       "originChain": 30,
-      "originAddress": "0000000000000000000000004200000000000000000000000000000000000006",
-      "circulating": "301056"
+      "originAddress": "0000000000000000000000004200000000000000000000000000000000000006"
     },
     {
       "assetId": 1282456869,
@@ -1141,8 +1015,7 @@
       "name": "USD Coin",
       "decimals": 6,
       "originChain": 30,
-      "originAddress": "000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913",
-      "circulating": "0"
+      "originAddress": "000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913"
     },
     {
       "assetId": 1712215274,
@@ -1150,8 +1023,7 @@
       "name": "BASEDChad",
       "decimals": 8,
       "originChain": 30,
-      "originAddress": "00000000000000000000000017931cfc3217261ce0fa21bb066633c463ed8634",
-      "circulating": "0"
+      "originAddress": "00000000000000000000000017931cfc3217261ce0fa21bb066633c463ed8634"
     },
     {
       "assetId": 1762216879,
@@ -1159,8 +1031,7 @@
       "name": "Base Quake",
       "decimals": 8,
       "originChain": 30,
-      "originAddress": "000000000000000000000000490fd22ae0f81256599204183d104c6de8fc57a5",
-      "circulating": "3000000000000000000"
+      "originAddress": "000000000000000000000000490fd22ae0f81256599204183d104c6de8fc57a5"
     },
     {
       "assetId": 1764662853,
@@ -1168,8 +1039,7 @@
       "name": "Degen",
       "decimals": 8,
       "originChain": 30,
-      "originAddress": "0000000000000000000000004ed4e862860bed51a9570b96d89af5e1b0efefed",
-      "circulating": "9999998976"
+      "originAddress": "0000000000000000000000004ed4e862860bed51a9570b96d89af5e1b0efefed"
     }
   ]
 }
