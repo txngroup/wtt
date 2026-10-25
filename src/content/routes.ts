@@ -100,7 +100,8 @@ export const FACTS: Record<number, Facts> = {
     tokenInput: 'To send an SPL token, paste its mint address on the To Algorand page. Token-2022 tokens are not supported.',
     redeem:
       'The redeem on Solana pays transaction fees and the rent for the accounts it opens, including your token account ' +
-      'for the token if you do not have one yet. SOL arrives as plain SOL, not wSOL.',
+      'for the token if you do not have one yet. SOL arrives as plain SOL, not wSOL. On this site the recipient\'s own ' +
+      'wallet has to redeem, because it must own the token account the transfer pays.',
     wrappedAlgo: 'B5WHK5yNkr6dUC9TPZSCegLTBxLXu9n6weyXefcj3xVh',
     to: {
       intro:
@@ -425,8 +426,9 @@ export const fromPath = (c: Chain) => `/algorand-${c.slug}-bridge/`
 
 export const ALGORAND_GOVERNOR: [number, number] = [10_000, 100_000]
 const governor = (from: string, [one, day]: [number, number]) =>
-  `<p>Wormhole's Governor holds a single transfer worth more than ${usd(one)} from ${from} for 24 hours. When more ` +
-  `than ${usd(day)} in all has left ${from} in the past 24 hours, later transfers wait until there is room again. ` +
+  `<p>Wormhole's Governor holds a single transfer worth more than ${usd(one)} from ${from} for 24 hours, and these do ` +
+  `not count toward its daily limit. Smaller transfers from ${from} share a limit of ${usd(day)} over any 24 hours: ` +
+  'one that would take the total above it waits until there is room again, or for 24 hours at most. ' +
   'A held transfer is not lost: the guardians sign it when the hold ends, and you redeem it as usual. (Limits on ' +
   `${CHECKED}.)</p>`
 
