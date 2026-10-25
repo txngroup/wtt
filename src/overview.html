@@ -18,8 +18,9 @@
 <ol>
   <li>You send the tokens to the bridge on the source chain. It locks them, or burns them if they are wrapped tokens.</li>
   <li>
-    Wormhole's guardians sign a message describing the transfer, called a VAA. This usually takes a minute or two. From
-    Ethereum, Arbitrum, Optimism and Base it takes about 20 minutes, until the transaction is final on Ethereum.
+    Wormhole's guardians sign a message describing the transfer, called a VAA. This usually takes under a minute. From
+    Ethereum, Arbitrum, Optimism, Base and Celo it takes about 15 to 30 minutes, until the transaction is final on
+    Ethereum.
   </li>
   <li>
     You redeem the signed transfer on the destination chain, which releases or mints the tokens to the recipient. No
@@ -27,9 +28,26 @@
   </li>
 </ol>
 <p>
-  Nothing is lost if you stop between steps. A signed transfer stays redeemable, and the Activity and Redeem pages find
-  it again later.
+  Nothing is lost if you stop between steps: the Activity and Redeem pages find the transfer again later. A transfer
+  signed before Wormhole changed its guardians in late June 2026 usually needs new signatures first. See
+  <a href="/stuck-transfers/">stuck transfers</a>.
 </p>
+
+<h3>Bridge routes</h3>
+<p>Each route has its own page with the tokens that can go, how long it takes, and the steps.</p>
+<ul class="routes">
+  <li>Ethereum: <a href="/ethereum-algorand-bridge/">to Algorand</a>, <a href="/algorand-ethereum-bridge/">from Algorand</a></li>
+  <li>Solana: <a href="/solana-algorand-bridge/">to Algorand</a>, <a href="/algorand-solana-bridge/">from Algorand</a></li>
+  <li>NEAR: <a href="/near-algorand-bridge/">to Algorand</a>, <a href="/algorand-near-bridge/">from Algorand</a></li>
+  <li>Base: <a href="/base-algorand-bridge/">to Algorand</a>, <a href="/algorand-base-bridge/">from Algorand</a></li>
+  <li>Arbitrum: <a href="/arbitrum-algorand-bridge/">to Algorand</a>, <a href="/algorand-arbitrum-bridge/">from Algorand</a></li>
+  <li>Optimism: <a href="/optimism-algorand-bridge/">to Algorand</a>, <a href="/algorand-optimism-bridge/">from Algorand</a></li>
+  <li>Avalanche: <a href="/avalanche-algorand-bridge/">to Algorand</a>, <a href="/algorand-avalanche-bridge/">from Algorand</a></li>
+  <li>BNB Smart Chain: <a href="/bnb-algorand-bridge/">to Algorand</a>, <a href="/algorand-bnb-bridge/">from Algorand</a></li>
+  <li>Polygon: <a href="/polygon-algorand-bridge/">to Algorand</a>, <a href="/algorand-polygon-bridge/">from Algorand</a></li>
+  <li>Celo: <a href="/celo-algorand-bridge/">to Algorand</a>, <a href="/algorand-celo-bridge/">from Algorand</a></li>
+</ul>
+<p>Questions are answered in the <a href="/faq/">FAQ</a>.</p>
 
 <h3>Supported chains and wallets</h3>
 <p>

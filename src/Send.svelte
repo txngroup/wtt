@@ -108,7 +108,7 @@
       const info = await submit(signed, review.sendTransferTxid)
       const sequence = sequenceFromAlgorandTxn(info)
       say(`Confirmed in round ${info.confirmedRound}. Transaction ${review.sendTransferTxid}, Wormhole sequence ${sequence}.`, 'ok')
-      const w: GuardianWait = { state: 'waiting', since: Date.now(), expected: 'This usually takes a minute or two.', dest: review.toChainName, link: `/redeem/?tx=${review.sendTransferTxid}`, id: review.sendTransferTxid }
+      const w: GuardianWait = { state: 'waiting', since: Date.now(), expected: 'This usually takes under a minute.', dest: review.toChainName, link: `/redeem/?tx=${review.sendTransferTxid}`, id: review.sendTransferTxid }
       wait = w
       for (let i = 0; i < 60; i++) {
         if (await fetchAlgorandVaa(sequence)) return void (wait = { ...w, state: 'ready' })

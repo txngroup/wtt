@@ -104,7 +104,6 @@
     })
 </script>
 
-<h2>Unwrap a wrapped gas token</h2>
 <p>
   Turns a chain's wrapped gas token (wSOL, WETH, WAVAX, WBNB or WPOL) back into the native coin. When this site
   redeems a transfer of a gas token, it already pays out the native coin. This page is for wrapped balances you hold

@@ -1,7 +1,15 @@
 import { readFileSync } from 'node:fs'
 import { defineConfig, loadEnv, type Plugin } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
-import { NOT_FOUND, PAGES, SITE_NAME, SITE_INTRO, type Page } from './src/pages.ts'
+import { FOOTER_LINKS, NOT_FOUND, PAGES, REPO_URL, SITE_NAME, SITE_INTRO, byPath, pageForPath, type Page } from './src/pages.ts'
+import { esc, type Doc } from './src/content/doc.ts'
+import { ROUTE_DOCS, ROUTES } from './src/content/routes.ts'
+import { HELP_DOCS } from './src/content/help.ts'
+import { ASSETS_DOC } from './src/content/assets.ts'
+
+// The guide pages, which have no tab: the route index and a page per route, the wrapped assets, the FAQ and stuck
+// transfers.
+const DOCS = [...ROUTE_DOCS, ASSETS_DOC, ...HELP_DOCS]
 
 // The site's security headers. The build writes them to dist/_headers, which Cloudflare Pages and Netlify read, and adds
 // the Content-Security-Policy to every page as a <meta> tag for hosts that cannot send headers, such as IPFS gateways.
@@ -42,27 +50,29 @@ const HEADERS = `/*
   Cache-Control: public, max-age=31536000, immutable
 `
 
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-
 // Absolute links (canonical, social card, sitemap) need the address the site is served from, SITE_URL. Without it the
 // build leaves them out.
-// The not-found page (no page) asks search engines not to index it, and has no canonical address of its own.
-function head(page: Page | undefined, siteUrl: string) {
-  if (!page) {
+// A page is an app page (PAGES), a guide page (DOCS: plain text, no app) or, with neither, the not-found page, which
+// asks search engines not to index it and has no canonical address of its own.
+type Target = { page?: Page; doc?: Doc }
+
+function head({ page, doc }: Target, siteUrl: string) {
+  const p = page ?? doc
+  if (!p) {
     return [
       `<title>${esc(NOT_FOUND.title)}</title>`,
       `<meta name="description" content="${esc(NOT_FOUND.description)}" />`,
       `<meta name="robots" content="noindex" />`,
     ].join('\n    ')
   }
-  const url = siteUrl + page.path
+  const url = siteUrl + p.path
   const tags = [
-    `<title>${esc(page.title)}</title>`,
-    `<meta name="description" content="${esc(page.description)}" />`,
+    `<title>${esc(p.title)}</title>`,
+    `<meta name="description" content="${esc(p.description)}" />`,
     `<meta property="og:type" content="website" />`,
     `<meta property="og:site_name" content="${SITE_NAME}" />`,
-    `<meta property="og:title" content="${esc(page.title)}" />`,
-    `<meta property="og:description" content="${esc(page.description)}" />`,
+    `<meta property="og:title" content="${esc(p.title)}" />`,
+    `<meta property="og:description" content="${esc(p.description)}" />`,
   ]
   if (siteUrl) {
     tags.push(
@@ -75,51 +85,90 @@ function head(page: Page | undefined, siteUrl: string) {
       `<meta name="twitter:card" content="summary_large_image" />`,
     )
   }
-  if (page.path === '/') {
-    // Structured data for search engines; a data block, so the page's script-src policy does not apply.
-    const app = {
-      '@context': 'https://schema.org',
-      '@type': 'WebApplication',
-      name: SITE_NAME,
-      ...(siteUrl && { url: siteUrl + '/' }),
-      description: SITE_INTRO,
-      applicationCategory: 'FinanceApplication',
-      operatingSystem: 'Any (web browser)',
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    }
-    tags.push(`<script type="application/ld+json">${JSON.stringify(app)}</script>`)
+  // Structured data for search engines; data blocks, so the page's script-src policy does not apply.
+  const data: object[] = []
+  if (page?.path === '/') {
+    data.push(
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        alternateName: 'Algorand Wormhole bridge',
+        ...(siteUrl && { url: siteUrl + '/' }),
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: SITE_NAME,
+        ...(siteUrl && { url: siteUrl + '/' }),
+        description: SITE_INTRO,
+        applicationCategory: 'FinanceApplication',
+        operatingSystem: 'Any (web browser)',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        sameAs: [REPO_URL],
+      },
+    )
   }
+  if (doc?.jsonLd) data.push(doc.jsonLd)
+  if (doc?.crumbs && siteUrl) {
+    const crumbs = [[SITE_NAME, '/'], [ROUTES.heading, ROUTES.path], [doc.heading, doc.path]]
+    data.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, item: siteUrl + path })),
+    })
+  }
+  // A "<" inside a string cannot end the block early.
+  for (const d of data) tags.push(`<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`)
   return tags.join('\n    ')
 }
 
 // The overview's text, shared with the app (App.svelte imports it too).
 const overview = readFileSync(new URL('./src/overview.html', import.meta.url), 'utf8')
+// Its list of route pages is written by hand, so a route page it does not link to stops the build.
+const unlinked = ROUTE_DOCS.filter((d) => d !== ROUTES && !overview.includes(`href="${d.path}"`)).map((d) => d.path)
+if (unlinked.length) throw new Error(`src/overview.html does not link to ${unlinked.join(', ')}`)
 
-// What crawlers and no-JavaScript visitors see: the same header, tabs and footer as the app, and the page's purpose
-// (the full text, for the overview).
-function body(page: Page | undefined) {
+// What crawlers and no-JavaScript visitors see, and all there is of a guide page: the same header, tabs and footer as
+// the app, and the page's text (for an app page, its purpose; the full text for the overview).
+function body({ page, doc }: Target) {
   const icon = (d: string) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}" /></svg>`
   const nav = PAGES.map(
     (p) => `<a href="${p.path}"${p.id === page?.id ? ' class="active" aria-current="page"' : ''}>${icon(p.icon)}<span>${esc(p.tab)}</span></a>`,
   ).join('')
-  const content = !page
-    ? `<h2>Page not found</h2>\n        <p>There is no page at this address. Choose a page above, or start from the <a href="/">overview</a>.</p>`
-    : page.id === 'overview'
-      ? `<article class="overview">${overview}</article>`
-      : `<h2>${esc(page.tab)}</h2>\n        <p>${esc(page.description)}</p>`
+  const content = doc
+    ? `<article class="guide">${doc.html}</article>`
+    : !page
+      ? `<p>There is no page at this address. Choose a page above, or start from the <a href="/">overview</a>.</p>`
+      : page.id === 'overview'
+        ? `<article class="overview">${overview}</article>`
+        : `<p>${esc(page.description)}</p>`
+  const crumbs = doc?.crumbs ? `<p class="crumbs"><a href="${ROUTES.path}">${esc(ROUTES.heading)}</a> /</p>` : ''
+  const links = FOOTER_LINKS.map((l) => `<a href="${l.href}">${esc(l.text)}</a>`).join(' ')
   return `<main>
-      <header><h1>${SITE_NAME}</h1>${page?.id === 'overview' ? `<p class="muted">${esc(SITE_INTRO)}</p>` : ''}</header>
+      <header><a class="brand" href="/">${SITE_NAME}</a>${crumbs}<h1>${esc((page ?? doc ?? NOT_FOUND).heading)}</h1>${page?.id === 'overview' ? `<p class="muted">${esc(SITE_INTRO)}</p>` : ''}</header>
       <nav aria-label="Pages">${nav}</nav>
       <section class="card">
         ${content}
-        <noscript><p class="warn">This site needs JavaScript to connect wallets and build transactions.</p></noscript>
+        ${doc ? '' : '<noscript><p class="warn">This site needs JavaScript to connect wallets and build transactions.</p></noscript>'}
       </section>
-      <footer class="muted"><p>Not affiliated with or endorsed by Wormhole, Portal or the Wormhole Foundation.</p></footer>
+      <footer class="muted"><p class="links">${links}</p><p>Not affiliated with or endorsed by Wormhole, Portal or the Wormhole Foundation.</p></footer>
     </main>`
 }
 
-const render = (html: string, page: Page | undefined, siteUrl: string) =>
-  html.replace(/<!-- page-head:[^>]*-->/, head(page, siteUrl)).replace(/<!-- page-body:[^>]*-->/, body(page))
+// A guide page marks #app data-static, so that main.ts leaves its text in place, and a build leaves the app's script
+// and preloads out of it. The dev server keeps its scripts, which load the styles.
+const render = (html: string, t: Target, siteUrl: string, dev = false) => {
+  let out = html.replace(/<!-- page-head:[^>]*-->/, head(t, siteUrl)).replace(/<!-- page-body:[^>]*-->/, body(t))
+  if (t.doc) out = out.replace('<div id="app">', '<div id="app" data-static>')
+  if (t.doc && !dev) out = out.replace(/\s*<script type="module"[^>]*><\/script>/g, '').replace(/\s*<link rel="modulepreload"[^>]*>/g, '')
+  return out
+}
+
+const targetFor = (path: string): Target => {
+  const page = pageForPath(path)
+  return page ? { page } : { doc: byPath(DOCS, path) }
+}
 
 // The root page is rendered in place; every other page gets its own <path>/index.html, plus 404.html, _headers,
 // robots.txt and a sitemap of the pages.
@@ -131,23 +180,28 @@ function pages(siteUrl: string): Plugin {
       order: 'post',
       handler(html, ctx) {
         // The policy would block the dev server's own scripts, so only builds carry it.
-        if (!ctx.server) html = html.replace('<head>', `<head>\n    <meta http-equiv="Content-Security-Policy" content="${CSP.join('; ')}" />`)
+        // The dev server answers every path with index.html, so it renders the page that path asks for.
+        if (ctx.server) return render(html, targetFor(new URL(ctx.originalUrl ?? ctx.path, 'http://dev').pathname), siteUrl, true)
+        html = html.replace('<head>', `<head>\n    <meta http-equiv="Content-Security-Policy" content="${CSP.join('; ')}" />`)
         template = html
-        return render(html, PAGES[0], siteUrl)
+        return render(html, { page: PAGES[0] }, siteUrl)
       },
     },
     generateBundle: {
       order: 'post', // after Vite has rendered index.html, which fills `template`
       handler() {
         for (const page of PAGES.slice(1)) {
-          this.emitFile({ type: 'asset', fileName: `${page.path.slice(1)}index.html`, source: render(template, page, siteUrl) })
+          this.emitFile({ type: 'asset', fileName: `${page.path.slice(1)}index.html`, source: render(template, { page }, siteUrl) })
         }
-        this.emitFile({ type: 'asset', fileName: '404.html', source: render(template, undefined, siteUrl) })
+        for (const doc of DOCS) {
+          this.emitFile({ type: 'asset', fileName: `${doc.path.slice(1)}index.html`, source: render(template, { doc }, siteUrl) })
+        }
+        this.emitFile({ type: 'asset', fileName: '404.html', source: render(template, {}, siteUrl) })
         this.emitFile({ type: 'asset', fileName: '_headers', source: HEADERS })
         const sitemap = siteUrl ? `\nSitemap: ${siteUrl}/sitemap.xml\n` : ''
         this.emitFile({ type: 'asset', fileName: 'robots.txt', source: `User-agent: *\nAllow: /\n${sitemap}` })
         if (!siteUrl) return this.warn('SITE_URL is not set: the build has no canonical links, social card image or sitemap')
-        const urls = PAGES.map((p) => `  <url><loc>${siteUrl}${p.path}</loc></url>`).join('\n')
+        const urls = [...PAGES, ...DOCS].map((p) => `  <url><loc>${siteUrl}${p.path}</loc></url>`).join('\n')
         this.emitFile({
           type: 'asset',
           fileName: 'sitemap.xml',

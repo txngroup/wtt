@@ -22,14 +22,43 @@ main > .card, footer { max-width: 688px; }
 }
 
 header { border-bottom: 1px solid var(--fg); padding-bottom: 14px; }
-h1 { font: 600 1.45rem/1.2 var(--mono); margin: 0; letter-spacing: -.02em; }
+/* The site name, then the page's own heading. */
+.brand { font: 600 1.45rem/1.2 var(--mono); letter-spacing: -.02em; text-decoration: none; }
+.brand:hover { text-decoration: underline; }
+h1 { font: 600 1.05rem/1.3 var(--mono); margin: 10px 0 0; letter-spacing: -.01em; }
+.crumbs { margin: 10px 0 0; font: 13px/1.3 var(--mono); color: var(--muted); }
+.crumbs + h1 { margin-top: 4px; }
 header p { margin: 8px 0 0; max-width: 62ch; }
 h2 { font: 600 1rem/1.3 var(--mono); margin: 32px 0 10px; letter-spacing: -.01em; }
 .card > h2:first-child { margin-top: 0; }
 h3 { font: 600 .95rem/1.3 var(--mono); margin: 26px 0 8px; }
-.overview > h2:first-child { margin-top: 0; }
-.overview ul, .overview ol { padding-left: 22px; margin: 8px 0; }
-.overview li { margin: 6px 0; }
+:is(.overview, .guide) > h2:first-child { margin-top: 0; }
+:is(.overview, .guide) :is(ul, ol) { padding-left: 22px; margin: 8px 0; }
+:is(.overview, .guide) li { margin: 6px 0; }
+/* Guide tables have column headings, and scroll sideways on a narrow screen rather than the page. */
+.scroll { overflow-x: auto; margin: 12px 0; }
+.guide th { width: auto; white-space: normal; }
+/* Addresses and ids in a table never break; the text beside them wraps instead. */
+.guide td code { word-break: normal; white-space: nowrap; }
+/* On a phone, each row stacks its cells, each under its column's heading, and an address breaks only if it cannot fit
+   the screen. Ids stay whole. */
+@media (max-width: 640px) {
+  .guide table:not(.keep) td code:not(.id) { white-space: normal; word-break: break-all; font-size: 12px; }
+  .guide table:not(.keep) thead { display: none; }
+  .guide table:not(.keep) :is(tr, td) { display: block; padding-right: 0; }
+  .guide table:not(.keep) td { padding-block: 2px; }
+  .guide table:not(.keep) tr { padding-block: 8px; }
+  .guide table:not(.keep) td::before { content: attr(data-label); display: block; font: 11px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .guide table:not(.keep) tr + tr > td { border-top: 0; }
+  .guide table:not(.keep) tr + tr { border-top: 1px solid var(--line); }
+}
+/* A 44-character Solana address fits on one line down to a 320px screen. */
+@media (max-width: 380px) {
+  .guide table:not(.keep) td code:not(.id) { font-size: 10.5px; }
+}
+@media (max-width: 340px) {
+  .guide table:not(.keep) td code:not(.id) { font-size: 10px; }
+}
 p { margin: 10px 0; }
 code, .mono { font: 13px/1.45 var(--mono); word-break: break-all; }
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
@@ -44,23 +73,23 @@ p.ok, p.err, p.warn { padding: 8px 12px; border: 1px solid currentColor; }
 .box { border: 1px solid var(--line); padding: 12px 14px; margin: 12px 0; background: var(--field); }
 
 /* Page links: an icon above a short label in six columns on phones (three under 360px), one row from 720px. */
-nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 28px -12px 0; border-bottom: 1px solid var(--fg); }
-nav a {
+main > nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 28px -12px 0; border-bottom: 1px solid var(--fg); }
+main > nav a {
   display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; min-height: 64px; padding: 10px 1px 9px;
   margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted); text-decoration: none; text-align: center;
   font: 500 10.5px/1.25 var(--mono); letter-spacing: .02em; text-transform: uppercase;
 }
-nav a:hover { color: var(--fg); }
-nav a.active { color: var(--fg); border-bottom-color: var(--fg); }
-nav a:focus-visible { outline-offset: -2px; }
-nav svg { flex: none; }
+main > nav a:hover { color: var(--fg); }
+main > nav a.active { color: var(--fg); border-bottom-color: var(--fg); }
+main > nav a:focus-visible { outline-offset: -2px; }
+main > nav svg { flex: none; }
 @media (max-width: 359px) {
-  nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  main > nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (min-width: 720px) {
-  nav { display: flex; gap: 4px; margin-inline: 0; }
-  nav a { flex-direction: row; gap: 8px; min-height: 48px; padding: 0 14px; font-size: 12px; letter-spacing: .05em; white-space: nowrap; }
-  nav svg { width: 18px; height: 18px; }
+  main > nav { display: flex; gap: 4px; margin-inline: 0; }
+  main > nav a { flex-direction: row; gap: 8px; min-height: 48px; padding: 0 14px; font-size: 12px; letter-spacing: .05em; white-space: nowrap; }
+  main > nav svg { width: 18px; height: 18px; }
 }
 .card { padding-top: 24px; }
 
@@ -118,8 +147,9 @@ th { font: 12px/1.9 var(--mono); text-transform: uppercase; letter-spacing: .04e
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 footer { margin-top: 48px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; }
+footer .links { display: flex; flex-wrap: wrap; gap: 4px 18px; color: var(--fg); }
 
 @media (max-width: 420px) {
   main { padding-top: 24px; }
-  h1 { font-size: 1.3rem; }
+  .brand { font-size: 1.3rem; }
 }

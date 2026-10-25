@@ -13,6 +13,7 @@
   import RedeemStatus, { type GuardianWait } from './RedeemStatus.svelte'
   import ConnectPrompt from './ConnectPrompt.svelte'
   import Log, { type LogLine } from './Log.svelte'
+  import { router } from './lib/router.svelte.ts'
 
   const { activeAddress, signTransactions } = useWallet()
 
@@ -28,7 +29,9 @@
     feeReserve?: bigint // for the chain's own coin: what Max leaves for fees and rent
   }
 
-  let chainId = $state(6)
+  // A route page links here with ?from=<chain slug>, which sets the source chain.
+  const fromParam = CHAINS.find((c) => c.slug === router.route.params.get('from'))
+  let chainId = $state(fromParam?.id ?? 6)
   let tokenInput = $state('')
   let token = $state<Token | undefined>()
   let algoAssetId = $state<bigint | undefined>()
@@ -65,7 +68,9 @@
 
   // Until the user picks a chain, start on the connected wallet's: the EVM wallet's current network, or Solana or NEAR
   // when only that wallet is connected. Then the balance of that chain's coin loads without a prompt to switch networks.
-  let picked = false // the source chain was set, by the user or from a wallet
+  // A link that chose the chain keeps it: the balance loads by itself only if the wallet is already on that chain, and
+  // otherwise waits for Load, so a network switch is only ever asked for by the user.
+  let picked = false // the source chain was set, by the user or from a wallet, and its coin may load by itself
   $effect(() => {
     const evm = conn.evm?.wallet
     const solana = !!conn.sol
@@ -78,7 +83,7 @@
         id = CHAINS.find((c) => c.evmChainId === current)?.id
       } else if (solana) id = CHAINS.find((c) => c.platform === 'solana')?.id
       else if (near) id = CHAINS.find((c) => c.platform === 'near')?.id
-      if (id === undefined || picked) return
+      if (id === undefined || picked || (fromParam && id !== chainId)) return
       picked = true
       chainId = id
       autoLoad()
@@ -286,11 +291,10 @@
       } else return
       const id = `${chain.id}/${emitter}/${sequence}`
       say(`Wormhole sequence ${sequence}.`, 'ok')
-      const slow = [2, 23, 24, 30].includes(chain.id) // these wait for Ethereum finality
       const w: GuardianWait = {
         state: 'waiting',
         since: Date.now(),
-        expected: slow ? 'This takes about 20 minutes, until the transaction is final on Ethereum.' : 'This usually takes a minute or two.',
+        expected: chain.slow ? 'This takes about 15 to 30 minutes, until the transaction is final on Ethereum.' : 'This usually takes under a minute.',
         dest: 'Algorand',
         link: `/redeem/?vaa=${id}`,
         id,
