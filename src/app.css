@@ -41,13 +41,13 @@ h3 { font: 600 .95rem/1.3 var(--mono); margin: 26px 0 8px; }
 .guide td code { word-break: break-all; }
 /* On a phone, each row stacks its cells, each under its column's heading. */
 @media (max-width: 520px) {
-  .guide thead { display: none; }
-  .guide tr, .guide td { display: block; padding-right: 0; }
-  .guide td { padding-block: 2px; }
-  .guide tr { padding-block: 8px; }
-  .guide td::before { content: attr(data-label); display: block; font: 11px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
-  .guide tr + tr > td { border-top: 0; }
-  .guide tr + tr { border-top: 1px solid var(--line); }
+  .guide table:not(.keep) thead { display: none; }
+  .guide table:not(.keep) :is(tr, td) { display: block; padding-right: 0; }
+  .guide table:not(.keep) td { padding-block: 2px; }
+  .guide table:not(.keep) tr { padding-block: 8px; }
+  .guide table:not(.keep) td::before { content: attr(data-label); display: block; font: 11px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .guide table:not(.keep) tr + tr > td { border-top: 0; }
+  .guide table:not(.keep) tr + tr { border-top: 1px solid var(--line); }
 }
 p { margin: 10px 0; }
 code, .mono { font: 13px/1.45 var(--mono); word-break: break-all; }

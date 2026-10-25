@@ -44,7 +44,7 @@ const FAQ: { q: string; a: string }[] = [
     a: 'A token bridged to Algorand arrives as a Wormhole-wrapped asset, one for each token on each chain. USDC from ' +
       'Ethereum is ASA 887407002, and USDC from Solana is ASA 898230074. Neither is Circle\'s native USDC on Algorand ' +
       '(ASA 31566704), so apps that expect native USDC may not accept them. A wrapped asset can only go back to the ' +
-      'chain it came from.',
+      'chain it came from. The <a href="/wrapped-assets/">wrapped assets</a> page lists them all.',
   },
   {
     q: 'What is the asset opt-in, and why does it cost 0.1 ALGO?',

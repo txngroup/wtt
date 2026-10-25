@@ -23,7 +23,7 @@ undone, so send a small test amount first.
 | `/redeem/?tx=<txid>` or `/redeem/?vaa=<chain/emitter/seq>` | Look up any transfer and redeem it on Algorand, an EVM chain or Solana |
 | `/activity/` | Token Bridge transfers to or from Algorand for the connected wallets or any address, with on-chain redeem status and a Continue link for unfinished ones |
 | `/unwrap/` | Unwrap a chain's wrapped gas token: wSOL (partial or full), or WETH, WAVAX, WBNB and WPOL |
-| `/bridges/` | Guides, without the app: a page for each route, such as `/near-algorand-bridge/` and `/algorand-near-bridge/`, with the tokens that can go, timing and steps. Also `/faq/` and `/stuck-transfers/` |
+| `/bridges/` | Guides, without the app: a page for each route, such as `/near-algorand-bridge/` and `/algorand-near-bridge/`, with the tokens that can go, timing and steps. Also `/wrapped-assets/`, every Wormhole-wrapped asset on Algorand with its original token, `/faq/` and `/stuck-transfers/` |
 
 Chains: Algorand, Solana, Ethereum, BNB Smart Chain, Polygon, Avalanche, Celo, Arbitrum, Optimism, Base and NEAR.
 
@@ -196,8 +196,8 @@ a plugin in `vite.config.ts` writes a pre-rendered `<page>/index.html` for each 
 social card tags and readable text, so every page can be linked and indexed. The same plugin writes `_headers`,
 `robots.txt` and `sitemap.xml`. The overview text lives in `src/overview.html`.
 
-The guide pages (route pages, FAQ, stuck transfers) are plain text in `src/content/`, which only the build reads. They
-have no tab, and the build leaves the app's script out of them. The route pages' token tables come from
+The guide pages (route pages, wrapped assets, FAQ, stuck transfers) are plain text in `src/content/`, which only the build reads. They
+have no tab, and the build leaves the app's script out of them. The token tables come from
 `src/content/wrapped-assets.json`, a list of every Wormhole-wrapped asset on Algorand. To refresh it, run
 `node scripts/wrapped-assets.mjs > src/content/wrapped-assets.json`, then check the dated facts in
 `src/content/routes.ts` (wait times, Governor limits) against the sources its header names.

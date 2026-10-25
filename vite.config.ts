@@ -5,9 +5,11 @@ import { FOOTER_LINKS, NOT_FOUND, PAGES, REPO_URL, SITE_NAME, SITE_INTRO, pageFo
 import { esc, type Doc } from './src/content/doc.ts'
 import { ROUTE_DOCS } from './src/content/routes.ts'
 import { HELP_DOCS } from './src/content/help.ts'
+import { ASSETS_DOC } from './src/content/assets.ts'
 
-// The guide pages, which have no tab: the route index and a page per route, the FAQ and stuck transfers.
-const DOCS = [...ROUTE_DOCS, ...HELP_DOCS]
+// The guide pages, which have no tab: the route index and a page per route, the wrapped assets, the FAQ and stuck
+// transfers.
+const DOCS = [...ROUTE_DOCS, ASSETS_DOC, ...HELP_DOCS]
 const ROUTES = ROUTE_DOCS[0]
 
 // The site's security headers. The build writes them to dist/_headers, which Cloudflare Pages and Netlify read, and adds

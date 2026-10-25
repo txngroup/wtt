@@ -107,6 +107,7 @@ export const NOT_FOUND = {
 export const REPO_URL = 'https://github.com/txngroup/wtt'
 export const FOOTER_LINKS = [
   { href: '/bridges/', text: 'Bridge routes' },
+  { href: '/wrapped-assets/', text: 'Wrapped assets' },
   { href: '/faq/', text: 'FAQ' },
   { href: '/stuck-transfers/', text: 'Stuck transfers' },
   { href: REPO_URL, text: 'Source code on GitHub' },

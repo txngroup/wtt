@@ -11,26 +11,26 @@
 //   get_foreign_asset on NEAR.
 import { keccak_256 } from '@noble/hashes/sha3'
 import { CHAINS, type Chain } from '../lib/wormhole.ts'
-import wrapped from './wrapped-assets.json'
+import wrapped from './wrapped-assets.json' with { type: 'json' }
 import { esc, type Doc } from './doc.ts'
 
 export const CHECKED = '25 October 2026'
 
-type Asset = (typeof wrapped.assets)[number]
+export type Asset = (typeof wrapped.assets)[number]
 const asset = (id: number) => {
   const a = wrapped.assets.find((a) => a.assetId === id)
   if (!a) throw new Error(`ASA ${id} is not in wrapped-assets.json`)
   return a
 }
 const fromChain = (chain: number) => wrapped.assets.filter((a) => a.originChain === chain)
-const held = (a: Asset) => BigInt(a.circulating) > 0n
+export const held = (a: Asset) => BigInt(a.circulating) > 0n
 // An amount in base units, with thousands separators and at most four decimals.
-const amount = (a: Asset) => {
+export const amount = (a: Asset) => {
   const n = Number(BigInt(a.circulating)) / 10 ** a.decimals
   return n.toLocaleString('en-US', { maximumFractionDigits: 4 })
 }
 const usd = (n: number) => '$' + n.toLocaleString('en-US')
-const asaLink = (id: number) => `<a href="https://allo.info/asset/${id}" target="_blank" rel="noreferrer">ASA ${id}</a>`
+export const asaLink = (id: number) => `<a href="https://allo.info/asset/${id}" target="_blank" rel="noreferrer">ASA ${id}</a>`
 
 // A token that can be sent from the chain to Algorand. Its address comes from the wrapped asset's origin; the chain's
 // own coin (coin) needs none.
@@ -43,7 +43,7 @@ export function checksum(address: string) {
   return '0x' + [...a].map((c, i) => (parseInt(h[i], 16) >= 8 ? c.toUpperCase() : c)).join('')
 }
 const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
-function base58(hex: string) {
+export function base58(hex: string) {
   let n = BigInt('0x' + hex)
   let out = ''
   while (n > 0n) {
@@ -435,8 +435,9 @@ const governor = (from: string, [one, day]: [number, number]) =>
   `${CHECKED}.)</p>`
 
 const list = (items: string[]) => (items.length ? `<ul>${items.map((i) => `<li>${i}</li>`).join('')}</ul>` : '')
-const table = (head: string[], rows: string[][]) =>
-  `<div class="scroll"><table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>` +
+// A table whose cells stack on a phone, unless it is narrow enough to keep (keep).
+export const table = (head: string[], rows: string[][], keep = false) =>
+  `<div class="scroll"><table${keep ? ' class="keep"' : ''}><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>` +
   rows.map((r) => `<tr>${r.map((d, i) => `<td data-label="${head[i]}">${d}</td>`).join('')}</tr>`).join('') +
   '</tbody></table></div>'
 const others = (c: Chain) => `<p>Going the other way? See the <a href="${fromPath(c)}">Algorand to ${c.name} bridge</a>.</p>`
@@ -463,7 +464,7 @@ function toAlgorand(c: Chain): Doc {
 <h2>Tokens you can send</h2>
 <p>A token can go to Algorand only if it already has a Wormhole-wrapped asset there. On ${CHECKED}, ${total === 1 ? 'one token' : `${total} tokens`} from ${c.name} did${total > f.to.tokens.length ? ', and these are the best known' : ''}:</p>
 ${table(['Token', `Address on ${c.name}`, 'Arrives on Algorand as'], rows)}
-<p>${coin ? `${esc(coin.label)} is ${c.name}'s own coin and needs no address. ` : ''}${f.tokenInput}</p>
+<p>${coin ? `${esc(coin.label)} is ${c.name}'s own coin and needs no address. ` : ''}${f.tokenInput} The <a href="/wrapped-assets/#${c.slug}">wrapped assets</a> page lists every ${c.name} token on Algorand.</p>
 ${home}
 <h2>How long it takes</h2>
 <p>${f.wait} Then you redeem the transfer on Algorand, which takes a few seconds.</p>
@@ -552,7 +553,7 @@ ${table(['Chain', 'To Algorand', 'From Algorand', 'Signing wait'], rows)}
 <li>A token can go to Algorand only if it already has a Wormhole-wrapped asset there.</li>
 <li>From Algorand, only Wormhole-wrapped assets can be sent, each back to the chain it came from.</li>
 </ul>
-<p>Questions are answered in the <a href="/faq/">FAQ</a>. If a transfer did not arrive, see <a href="/stuck-transfers/">stuck transfers</a>.</p>`
+<p>Every Wormhole-wrapped asset on Algorand, with its original token, is on the <a href="/wrapped-assets/">wrapped assets</a> page. Questions are answered in the <a href="/faq/">FAQ</a>. If a transfer did not arrive, see <a href="/stuck-transfers/">stuck transfers</a>.</p>`
   return {
     path: '/bridges/',
     title: 'Algorand Bridge Routes by Chain - Algorand WTT',
