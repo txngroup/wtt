@@ -96,8 +96,9 @@ npm run verify -- https://wtt.txn.group release
 The last command downloads every file the way a browser would and compares it with the release. The live check
 badge at the top runs the same check every hour and after every deploy.
 
-**Rebuild it yourself.** Check out the release's commit, use the Node version in `.nvmrc`, and set the two settings
-from the release notes in `.env`. Then build and compare with the release's `SHA256SUMS`:
+**Rebuild it yourself.** Check out the release's commit in a full clone (not `--depth 1`, since the sitemap's dates come
+from the git history), use the Node version in `.nvmrc`, and set the two settings from the release notes in `.env`.
+Then build and compare with the release's `SHA256SUMS`:
 
 ```sh
 npm ci && npm run build
@@ -194,7 +195,10 @@ parts of them the app needs are hand-written in `src/lib/`, and checked byte for
 The pages are listed once, in `src/pages.ts`. `src/lib/router.svelte.ts` switches between them in place. At build time
 a plugin in `vite.config.ts` writes a pre-rendered `<page>/index.html` for each page with its own title, description,
 social card tags and readable text, so every page can be linked and indexed. The same plugin writes `_headers`,
-`robots.txt` and `sitemap.xml`. The overview text lives in `src/overview.html`.
+`robots.txt` and `sitemap.xml`. The overview text lives in `src/overview.html`. Descriptions are at most 160 characters,
+the length search results show, and a longer one stops the build. An app page's `about` text sits under its task, in the
+app and the pre-rendered page alike. The sitemap dates each page by the last commit to the files its text comes from,
+and leaves the dates out of a build without the full git history.
 
 The guide pages (route pages, wrapped assets, FAQ, stuck transfers) are plain text in `src/content/`, which only the build reads. They
 have no tab, and the build leaves the app's script out of them. The token tables come from

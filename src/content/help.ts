@@ -110,7 +110,7 @@ const faq: Doc = {
   heading: 'Algorand bridge FAQ',
   description:
     'Answers about bridging to and from Algorand with the Wormhole Token Bridge: which tokens can go, wrapped USDC, ' +
-    'the ASA opt-in, timing, costs, 24-hour holds and safety.',
+    'the ASA opt-in, timing, costs and 24-hour holds.',
   html: FAQ.map((f) => `<h2>${f.q}</h2>\n<p>${f.a}</p>`).join('\n'),
   jsonLd: {
     '@context': 'https://schema.org',
@@ -124,8 +124,8 @@ const stuck: Doc = {
   title: 'Finish a Stuck Wormhole Transfer (Algorand) - Algorand WTT',
   heading: 'Finish a stuck Wormhole transfer',
   description:
-    'A Wormhole Token Bridge transfer to or from Algorand that never arrived, such as one left unfinished on Portal, ' +
-    'can usually still be redeemed. Find it, see why it stopped, and finish it.',
+    'A Wormhole transfer to or from Algorand that never arrived, such as one left on Portal, can usually still be ' +
+    'redeemed. See why it stopped and finish it.',
   html: `<p>A Wormhole transfer happens in two parts. The tokens leave the source chain first. Then someone redeems the signed transfer on the destination chain, which releases the tokens there. If the second part never happened, the tokens have left one chain and not arrived on the other. This is how most transfers left on Portal ended up, after Portal stopped supporting Algorand.</p>
 <p>Most of these can be finished here, from your own wallets.</p>
 <h2>1. Find the transfer</h2>

@@ -69,6 +69,8 @@
     {:else}
       <p>There is no page at this address. Choose a page above, or start from the <a href="/">overview</a>.</p>
     {/if}
+    <!-- How the page's task works, also in the pre-rendered page. -->
+    {#if page?.about}<div class="about">{@html page.about}</div>{/if}
   </section>
 
   <footer class="muted">
