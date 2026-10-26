@@ -18,9 +18,12 @@ if (long.length) throw new Error(`descriptions over 160 characters: ${long.join(
 
 // The sitemap's lastmod for a page: the date of the latest commit to the files its text comes from. Without the full
 // history (a shallow clone, or no git) every file would date from the latest commit, so lastmod is left out instead.
+// Only the files that hold a page's text count. Search engines stop trusting dates that move without the text, so
+// src/lib/wormhole.ts is left out: the pages take only each chain's name, slug and wait from it, and it changes mostly
+// for code.
 const SOURCES = new Map<{ path: string }, string[]>([
   ...PAGES.map((p): [Page, string[]] => [p, p.id === 'overview' ? ['src/overview.html', 'src/pages.ts'] : ['src/pages.ts']]),
-  ...ROUTE_DOCS.map((d): [Doc, string[]] => [d, ['src/content/routes.ts', 'src/content/wrapped-assets.json', 'src/lib/wormhole.ts']]),
+  ...ROUTE_DOCS.map((d): [Doc, string[]] => [d, ['src/content/routes.ts', 'src/content/wrapped-assets.json']]),
   [ASSETS_DOC, ['src/content/assets.ts', 'src/content/wrapped-assets.json']],
   ...HELP_DOCS.map((d): [Doc, string[]] => [d, ['src/content/help.ts']]),
 ])
