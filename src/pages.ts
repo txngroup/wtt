@@ -1,5 +1,7 @@
 // The site's pages: one entry per tab, used by the in-app router and by the build, which writes a pre-rendered
 // HTML file for each (own title, description, canonical URL and readable text) so every page can be linked and indexed.
+import { CHAINS, type Chain } from './lib/wormhole.ts'
+
 export const SITE_NAME = 'Algorand WTT'
 export const SITE_INTRO =
   'Move tokens between Algorand and other chains with the Wormhole Token Bridge (Wrapped Token Transfers). The site ' +
@@ -15,8 +17,19 @@ export type Page = {
   icon: string // path data for the tab's stroked 24x24 icon
   title: string // <title> and social card title
   heading: string // the page's <h1>, under the site name
-  description: string // meta description, and the pre-rendered page text
+  description: string // meta description, and the pre-rendered page text; at most 160 characters, which the build checks
+  about?: string // HTML under the page's tool, in the app and the pre-rendered page alike
 }
+
+// The route pages (src/content/routes.ts), which the app pages link to.
+export const toPath = (c: Chain) => `/${c.slug}-algorand-bridge/`
+export const fromPath = (c: Chain) => `/algorand-${c.slug}-bridge/`
+
+const and = (l: string[]) => l.slice(0, -1).join(', ') + ' and ' + l.at(-1)
+const FAST = CHAINS.filter((c) => !c.slow).map((c) => c.name)
+const SLOW = CHAINS.filter((c) => c.slow).map((c) => c.name)
+const routeLinks = (path: (c: Chain) => string, label: (c: Chain) => string) =>
+  CHAINS.map((c) => `<a href="${path(c)}">${label(c)}</a>`).join(', ')
 
 export const PAGES: Page[] = [
   {
@@ -28,8 +41,8 @@ export const PAGES: Page[] = [
     title: 'Algorand Bridge: Wormhole Token Bridge to and from Algorand',
     heading: 'Algorand Wormhole bridge',
     description:
-      'Algorand bridge for the Wormhole Token Bridge. Move tokens between Algorand and Ethereum, Solana, NEAR, Base ' +
-      'and more, and finish stuck transfers, from your own wallets.',
+      'Algorand bridge for the Wormhole Token Bridge: move tokens between Algorand and Ethereum, Solana, NEAR, Base ' +
+      'and more, and finish stuck transfers.',
   },
   {
     id: 'to-algorand',
@@ -39,9 +52,17 @@ export const PAGES: Page[] = [
     title: `Send Tokens to Algorand (Wormhole Bridge) - ${SITE_NAME}`,
     heading: 'Send tokens to Algorand',
     description:
-      'Bridge tokens to Algorand from Ethereum, Solana, Avalanche, BNB Smart Chain, Polygon, Arbitrum, Optimism, ' +
-      'Base, Celo or NEAR with the Wormhole Token Bridge. Works for tokens that already have a wrapped asset on Algorand, ' +
-      'and offers the ASA opt-in when the recipient needs one.',
+      'Bridge tokens to Algorand from Ethereum, Solana, Base, Arbitrum, Avalanche, BNB Smart Chain, Polygon, ' +
+      'Optimism, Celo or NEAR with the Wormhole Token Bridge.',
+    about:
+      '<h2>How sending to Algorand works</h2>\n' +
+      '<p>A token can go to Algorand only if it already has a Wormhole-wrapped asset there. It arrives as that asset, ' +
+      'one ASA for each token on each chain, and can later go back the same way. The recipient has to opt in to the ' +
+      'asset, which sets aside 0.1 ALGO; the page offers the opt-in, or the recipient can opt in as part of the redeem.</p>\n' +
+      `<p>Wormhole guardians sign a transfer from ${and(FAST)} within about 15 seconds. From ${and(SLOW)} they wait ` +
+      'until it is final on Ethereum, which takes 15 to 30 minutes. Then you redeem it on Algorand, usually for under ' +
+      '0.01 ALGO. A transfer you leave part way can be finished later on the <a href="/redeem/">Redeem</a> page.</p>\n' +
+      `<p>Each chain has a page with the tokens that can go, their addresses and the steps: ${routeLinks(toPath, (c) => c.name)}.</p>`,
   },
   {
     id: 'send',
@@ -51,8 +72,17 @@ export const PAGES: Page[] = [
     title: `Send Tokens from Algorand (Wormhole Bridge) - ${SITE_NAME}`,
     heading: 'Send tokens from Algorand',
     description:
-      'Send Wormhole-wrapped assets held on Algorand, such as WAVAX, WETH or SOL, back to their origin chain with the ' +
-      'Wormhole Token Bridge (Wrapped Token Transfers), then redeem them there.',
+      'Send Wormhole-wrapped assets on Algorand, such as WETH, USDC or SOL, back to their origin chain with the ' +
+      'Wormhole Token Bridge, then redeem them there.',
+    about:
+      '<h2>How sending from Algorand works</h2>\n' +
+      '<p>Only Wormhole-wrapped assets can leave Algorand on this site, each back to the chain it came from, where it ' +
+      'is redeemed for the original token. ALGO and Algorand\'s own assets, such as Circle\'s USDC on Algorand, cannot ' +
+      'be sent out. The <a href="/wrapped-assets/">wrapped assets</a> page lists every one with its original token.</p>\n' +
+      '<p>Wormhole guardians sign a transfer from Algorand within about 15 seconds. Then you redeem it on the ' +
+      'destination chain with a wallet there, which pays that chain\'s fee. WETH, WAVAX, WBNB, Wrapped Matic and SOL ' +
+      'arrive as the chain\'s own coin. On Solana the recipient\'s own wallet has to redeem.</p>\n' +
+      `<p>Each chain has a page with the assets that can go and how to redeem there: ${routeLinks(fromPath, (c) => c.name)}.</p>`,
   },
   {
     id: 'redeem',
@@ -62,8 +92,19 @@ export const PAGES: Page[] = [
     title: `Redeem a Wormhole Transfer - ${SITE_NAME}`,
     heading: 'Redeem a Wormhole transfer',
     description:
-      'Finish a Wormhole Token Bridge transfer on Algorand, an EVM chain or Solana. Look it up by source ' +
-      'transaction, Wormholescan ID or signed VAA, and redeem it from your own wallet.',
+      'Finish a Wormhole Token Bridge transfer on Algorand, Solana, NEAR or an EVM chain. Find it by source ' +
+      'transaction, Wormholescan ID or signed VAA.',
+    about:
+      '<h2>When to use Redeem</h2>\n' +
+      '<p>A Wormhole transfer finishes only when someone redeems it on the destination chain. This page is for a ' +
+      'transfer that was signed but never redeemed, such as one left unfinished on Portal after Portal stopped ' +
+      'supporting Algorand, or one you started here and closed the page on.</p>\n' +
+      '<p>It looks the transfer up, checks on the destination chain whether it was already redeemed, and redeems it ' +
+      'there from your wallet. On Algorand and the EVM chains any wallet can pay for the redeem, and the tokens always ' +
+      'go to the recipient written in the transfer.</p>\n' +
+      '<p>A transfer signed by an older guardian set that has since expired cannot be redeemed as it is. The page warns ' +
+      'about this on every chain but NEAR. <a href="/stuck-transfers/">Stuck transfers</a> explains this and the other ' +
+      'reasons a transfer stops.</p>',
   },
   {
     id: 'activity',
@@ -74,7 +115,7 @@ export const PAGES: Page[] = [
     heading: 'Wormhole transfer activity',
     description:
       'See Wormhole Token Bridge transfers to and from Algorand for any address, check on chain whether each one ' +
-      'was redeemed, and continue any that were left unfinished.',
+      'was redeemed, and continue unfinished ones.',
   },
   {
     id: 'unwrap',

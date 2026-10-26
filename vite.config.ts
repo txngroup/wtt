@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { defineConfig, loadEnv, type Plugin } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
@@ -10,6 +11,31 @@ import { ASSETS_DOC } from './src/content/assets.ts'
 // The guide pages, which have no tab: the route index and a page per route, the wrapped assets, the FAQ and stuck
 // transfers.
 const DOCS = [...ROUTE_DOCS, ASSETS_DOC, ...HELP_DOCS]
+
+// Search results cut a description off at about 160 characters, so a longer one stops the build.
+const long = [...PAGES, ...DOCS].filter((p) => p.description.length > 160).map((p) => `${p.path} (${p.description.length})`)
+if (long.length) throw new Error(`descriptions over 160 characters: ${long.join(', ')}`)
+
+// The sitemap's lastmod for a page: the date of the latest commit to the files its text comes from. Without the full
+// history (a shallow clone, or no git) every file would date from the latest commit, so lastmod is left out instead.
+// Only the files that hold a page's text count. Search engines stop trusting dates that move without the text, so
+// src/lib/wormhole.ts is left out: the pages take only each chain's name, slug and wait from it, and it changes mostly
+// for code.
+const SOURCES = new Map<{ path: string }, string[]>([
+  ...PAGES.map((p): [Page, string[]] => [p, p.id === 'overview' ? ['src/overview.html', 'src/pages.ts'] : ['src/pages.ts']]),
+  ...ROUTE_DOCS.map((d): [Doc, string[]] => [d, ['src/content/routes.ts', 'src/content/wrapped-assets.json']]),
+  [ASSETS_DOC, ['src/content/assets.ts', 'src/content/wrapped-assets.json']],
+  ...HELP_DOCS.map((d): [Doc, string[]] => [d, ['src/content/help.ts']]),
+])
+const git = (...args: string[]) => {
+  try {
+    return execFileSync('git', args, { cwd: import.meta.dirname, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
+  } catch {
+    return undefined
+  }
+}
+const fullHistory = git('rev-parse', '--is-shallow-repository') === 'false'
+const lastmod = (p: { path: string }) => (fullHistory ? git('log', '-1', '--format=%cs', '--', ...SOURCES.get(p)!) || undefined : undefined)
 
 // The site's security headers. The build writes them to dist/_headers, which Cloudflare Pages and Netlify read, and adds
 // the Content-Security-Policy to every page as a <meta> tag for hosts that cannot send headers, such as IPFS gateways.
@@ -142,7 +168,7 @@ function body({ page, doc }: Target) {
       ? `<p>There is no page at this address. Choose a page above, or start from the <a href="/">overview</a>.</p>`
       : page.id === 'overview'
         ? `<article class="overview">${overview}</article>`
-        : `<p>${esc(page.description)}</p>`
+        : `<p>${esc(page.description)}</p>${page.about ? `\n        <div class="about">${page.about}</div>` : ''}`
   const crumbs = doc?.crumbs ? `<p class="crumbs"><a href="${ROUTES.path}">${esc(ROUTES.heading)}</a> /</p>` : ''
   const links = FOOTER_LINKS.map((l) => `<a href="${l.href}">${esc(l.text)}</a>`).join(' ')
   return `<main>
@@ -201,7 +227,11 @@ function pages(siteUrl: string): Plugin {
         const sitemap = siteUrl ? `\nSitemap: ${siteUrl}/sitemap.xml\n` : ''
         this.emitFile({ type: 'asset', fileName: 'robots.txt', source: `User-agent: *\nAllow: /\n${sitemap}` })
         if (!siteUrl) return this.warn('SITE_URL is not set: the build has no canonical links, social card image or sitemap')
-        const urls = [...PAGES, ...DOCS].map((p) => `  <url><loc>${siteUrl}${p.path}</loc></url>`).join('\n')
+        if (!fullHistory) this.warn('no full git history: the sitemap has no lastmod dates')
+        const urls = [...PAGES, ...DOCS]
+          .map((p) => [p, lastmod(p)] as const)
+          .map(([p, d]) => `  <url><loc>${siteUrl}${p.path}</loc>${d ? `<lastmod>${d}</lastmod>` : ''}</url>`)
+          .join('\n')
         this.emitFile({
           type: 'asset',
           fileName: 'sitemap.xml',

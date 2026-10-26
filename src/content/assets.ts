@@ -47,7 +47,7 @@ export const ASSETS_DOC: Doc = {
   heading: 'Wormhole-wrapped assets on Algorand',
   description:
     `All ${total} Wormhole-wrapped assets on Algorand by origin chain, with each one's original token address and ` +
-    'links to allo.info and Vestige for supply, holders and prices.',
+    'links to allo.info and Vestige for supply and prices.',
   html: `<p>The Wormhole Token Bridge creates one Algorand asset (ASA) for each token that has been attested to Algorand from another chain. On ${CHECKED} there were ${total} from the chains this site supports. Each one can only go back to the chain it came from, where it is redeemed for the original token.</p>
 <p>Anyone can attest a token, so the list includes test tokens and spam. A wrapped asset is worth only what its original token is worth, and an ASA's name proves nothing. Check the original token's address before trusting an asset.</p>
 <p>For how much of each asset is on Algorand now, its holders, trading and prices, follow the allo.info and Vestige links.</p>

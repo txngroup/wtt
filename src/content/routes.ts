@@ -13,6 +13,7 @@ import { keccak_256 } from '@noble/hashes/sha3'
 import { CHAINS, type Chain } from '../lib/wormhole.ts'
 import wrapped from './wrapped-assets.json' with { type: 'json' }
 import { esc, type Doc } from './doc.ts'
+import { fromPath, toPath } from '../pages.ts'
 
 export const CHECKED = '25 October 2026'
 
@@ -422,8 +423,7 @@ export const FACTS: Record<number, Facts> = {
   },
 }
 
-export const toPath = (c: Chain) => `/${c.slug}-algorand-bridge/`
-export const fromPath = (c: Chain) => `/algorand-${c.slug}-bridge/`
+export { fromPath, toPath }
 
 export const ALGORAND_GOVERNOR: [number, number] = [10_000, 100_000]
 const governor = (from: string, [one, day]: [number, number]) =>
@@ -489,7 +489,7 @@ ${others(c)}`
     description:
       `Bridge ${total > names.length ? `${names.join(', ')} and more` : names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0]} ` +
       `from ${c.name} to Algorand with the Wormhole Token ` +
-      `Bridge: which tokens work, how long it takes (${c.slow ? '15 to 30 minutes' : 'under a minute'}) and the steps.`,
+      `Bridge: which tokens work, the wait (${c.slow ? '15 to 30 minutes' : 'under a minute'}) and the steps.`,
     html,
     crumbs: true,
   }
@@ -523,13 +523,15 @@ ${governor('Algorand', ALGORAND_GOVERNOR)}
 ${f.from.notes.length ? `<h2>Good to know</h2>\n${list(f.from.notes)}` : ''}
 ${STUCK}
 ${back(c)}`
+  // Polygon's USDC and USDC.e are both USDC on Algorand, so a name is listed once.
+  const units = [...new Set(shown.map((a) => a.unitName))].slice(0, 3)
   return {
     path: fromPath(c),
     title: `Algorand to ${c.name} Bridge (Wormhole) - Algorand WTT`,
     heading: `Algorand to ${c.name} bridge`,
     description:
-      `Send Wormhole-wrapped ${shown.slice(0, 3).map((a) => a.unitName).join(', ')} from Algorand back to ${c.name} ` +
-      `with the Wormhole Token Bridge: what can go, how long it takes, and how to redeem on ${c.name}.`,
+      `Send Wormhole-wrapped ${units.length > 1 ? `${units.slice(0, -1).join(', ')} and ${units.at(-1)}` : units[0]} from Algorand back to ${c.name} ` +
+      'with the Wormhole Token Bridge: what can go, the wait and how to redeem.',
     html,
     crumbs: true,
   }
@@ -556,7 +558,7 @@ ${table(['Chain', 'To Algorand', 'From Algorand', 'Signing wait'], rows)}
     title: 'Algorand Bridge Routes by Chain - Algorand WTT',
     heading: 'Algorand bridge routes',
     description:
-      `Every Wormhole Token Bridge route to and from Algorand on this site: Ethereum, Solana, NEAR, Base, Arbitrum, ` +
+      `Every Wormhole Token Bridge route to and from Algorand: Ethereum, Solana, NEAR, Base, Arbitrum, ` +
       'Avalanche, BNB Smart Chain, Polygon, Optimism and Celo.',
     html,
   }
